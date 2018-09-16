@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/container_players"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/std_mrgn"
+            android:layout_marginRight="@dimen/std_mrgn"
+            android:layout_marginTop="@dimen/std_mrgn">
+
+            <TextView
+                style="@style/TextViewStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/player_number" />
+
+            <TextView
+                style="@style/TextViewStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:hint="2" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/container_mode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/container_players"
+            android:layout_marginLeft="@dimen/std_mrgn"
+            android:layout_marginRight="@dimen/std_mrgn"
+            android:layout_marginTop="@dimen/std_mrgn">
+
+            <TextView
+                style="@style/TextViewStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/game_mode" />
+
+            <TextView
+                style="@style/TextViewStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:hint="v2" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/container_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/container_mode"
+            android:layout_marginLeft="@dimen/std_mrgn"
+            android:layout_marginRight="@dimen/std_mrgn"
+            android:layout_marginTop="@dimen/std_mrgn">
+
+            <TextView
+                style="@style/TextViewStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/thinking_time" />
+
+            <TextView
+                style="@style/TextViewStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:hint="30s" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/container_pts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/container_time"
+            android:layout_marginLeft="@dimen/std_mrgn"
+            android:layout_marginRight="@dimen/std_mrgn"
+            android:layout_marginTop="@dimen/std_mrgn">
+
+            <TextView
+                style="@style/TextViewStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pts_to_win" />
+
+            <TextView
+                style="@style/TextViewStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:hint="50" />
+        </FrameLayout>
+
+        <Button
+            android:id="@+id/search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/start"
+            android:text="@string/search" />
+
+        <Switch
+            android:id="@+id/switcher"
+            style="@style/TextViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/container_pts"
+            android:layout_marginLeft="@dimen/std_mrgn"
+            android:layout_marginRight="@dimen/std_mrgn"
+            android:layout_marginTop="@dimen/std_mrgn"
+            android:text="@string/screen" />
+
+        <Button
+            android:id="@+id/start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:text="@string/start" />
+    </RelativeLayout>
+</layout>
+

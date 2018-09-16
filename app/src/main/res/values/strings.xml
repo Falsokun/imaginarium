@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">RxJavaTest</string>
+    <string name="pl_imaginarium">Imaginarium</string>
+    <string name="player_number">Player number</string>
+    <string name="game_mode">Game mode</string>
+    <string name="thinking_time">Time to think</string>
+    <string name="pts_to_win">Points to win</string>
+    <string name="start">Start</string>
+    <string name="OK">OK</string>
+    <string name="search">Search</string>
+    <string name="searching">Searching...</string>
+    <string name="waiting">Waiting for players</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="wifi_disabled_retry">Wifi disabled. Turn on Wifi and retry</string>
+    <string name="cancel">Cancel</string>
+    <string name="screen">Screen</string>
+    <string name="connecting">Connecting to device</string>
+</resources>
