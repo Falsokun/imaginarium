@@ -1,15 +1,14 @@
 package com.example.olesya.rxjavatest;
 
 import android.app.Activity;
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-import android.content.Intent;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.support.v7.app.AlertDialog;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import java.lang.ref.WeakReference;
@@ -28,6 +27,16 @@ public class MenuViewModel extends ViewModel {
         model = new MenuModel(menuFragment.getContext());
         weakFragment = new WeakReference<>(menuFragment);
         model.getAvailableDevices().observe(weakFragment.get(), deviceList -> updateListInDialog());
+        model.getMessage().observe(weakFragment.get(), v -> Utils.showAlert(weakFragment.get().getContext(),
+                model.getMessage().getValue()));
+        model.getReady().observe(weakFragment.get(), this::startGame);
+    }
+
+    private void startGame(int gameMode) {
+        if (gameMode == Utils.GAME_MODE.SCREEN_MODE) {
+            Activity
+        } else { //CLIENT_MODE
+        }
     }
 
     public View.OnClickListener getOnSearchClickListener(Activity context) {
@@ -82,10 +91,8 @@ public class MenuViewModel extends ViewModel {
                 .setView(dialogView);
     }
 
-    public View.OnClickListener getOnStartClickListener() {
-        return v -> {
-
-        };
+    public View.OnClickListener getOnStartClickListener(Activity activity, Switch switcher) {
+        return v -> model.startServiceOnCondition(switcher.isChecked(), activity);
     }
 
     private ArrayList<WifiP2pDevice> getCheckedList(ListView listView) {
@@ -104,22 +111,15 @@ public class MenuViewModel extends ViewModel {
         return deviceList;
     }
 
-    public void startServiceOnCondition(boolean isChecked, Activity activity) {
-        if (isChecked) {
-//            activity.bindService(service)
-            activity.startService(new Intent(activity, Server.class));
-        } else {
-            activity.startService(new Intent(activity, Client.class));
-        }
-    }
-
     public void onResume() {
         weakFragment.get().getActivity().registerReceiver(model.getReceiver(), model.getIntentFilter());
+        model.bindService(weakFragment.get().getActivity());
 //        weakFragment.get().getActivity().bindService(serviceIntent, sConn, Context.BIND_AUTO_CREATE);
     }
 
     public void onPause() {
         weakFragment.get().getActivity().unregisterReceiver(model.getReceiver());
+        model.unbindService(weakFragment.get().getActivity());
 //        if (bound) {
 //            getActivity().unbindService(sConn);
 //            bound = false;
