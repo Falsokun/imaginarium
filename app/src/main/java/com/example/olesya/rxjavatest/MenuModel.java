@@ -1,28 +1,20 @@
 package com.example.olesya.rxjavatest;
 
-import android.app.Activity;
-import android.app.Service;
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.ServiceConnection;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.net.wifi.p2p.WifiP2pInfo;
 import android.net.wifi.p2p.WifiP2pManager;
-import android.os.Binder;
-import android.os.IBinder;
 import android.widget.Toast;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
 
-import static android.content.Context.BIND_AUTO_CREATE;
 import static android.os.Looper.getMainLooper;
 
 public class MenuModel {
@@ -32,41 +24,14 @@ public class MenuModel {
     private BroadcastReceiver p2preceiver;
     private IntentFilter intentFilter;
 
-    //Service vars
-    private Intent intent;
-    private ServiceConnection serviceConn;
-    private boolean serviceBound = false;
-    private Server mServer;
-    private Client mClient;
-    InetAddress hostAddress;
-    private MutableLiveData<String> message = new MutableLiveData<>();
+    private InetAddress hostAddress;
 
     private MutableLiveData<ArrayList<WifiP2pDevice>> availableDevices = new MutableLiveData<>();
-    private MutableLiveData<Integer> readyStatus = new MutableLiveData<>();
 
     public MenuModel(Context context) {
         mManager = (WifiP2pManager) context.getSystemService(Context.WIFI_P2P_SERVICE);
         mChannel = mManager.initialize(context, getMainLooper(), null);
-        readyStatus.setValue(-1);
         initReceiver();
-
-        serviceConn = new ServiceConnection() {
-            public void onServiceConnected(ComponentName name, IBinder binder) {
-                if (intent.getBooleanExtra(Utils.ACTION_SERVER_SERVICE, false)) {
-                    mServer = ((Server.MyBinder) binder).getService();
-                    mServer.setMessage(message);
-                } else {
-                    mClient = ((Client.MyBinder) binder).getService();
-                    mClient.setMessage(message);
-                }
-
-                serviceBound = true;
-            }
-
-            public void onServiceDisconnected(ComponentName name) {
-                serviceBound = false;
-            }
-        };
     }
 
     /**
@@ -173,37 +138,7 @@ public class MenuModel {
         return availableDevices;
     }
 
-    public void startServiceOnCondition(boolean isServer, Activity activity) {
-        if (isServer) {
-            intent = new Intent(activity, Server.class);
-            intent.putExtra(Utils.ACTION_SERVER_SERVICE, true);
-            activity.startService(intent);
-        } else {
-            intent = new Intent(activity, Client.class);
-            intent.putExtra(Utils.ACTION_SERVER_SERVICE, false);
-            intent.putExtra(Utils.CLIENT_COMMANDS.HOST_CONFIG, hostAddress);
-            activity.startService(intent);
-        }
-
-        bindService(activity);
-    }
-
-    public void bindService(Context context) {
-        if (intent != null)
-            context.bindService(intent, serviceConn, BIND_AUTO_CREATE);
-    }
-
-    public void unbindService(Context context) {
-        if (!serviceBound || intent == null) return;
-        context.unbindService(serviceConn);
-        serviceBound = false;
-    }
-
-    public MutableLiveData<String> getMessage() {
-        return message;
-    }
-
-    public MutableLiveData<Integer> getReady() {
-        return readyStatus;
+    public InetAddress getHostAddress() {
+        return hostAddress;
     }
 }

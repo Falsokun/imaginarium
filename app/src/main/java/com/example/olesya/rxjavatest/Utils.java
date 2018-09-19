@@ -12,13 +12,13 @@ public class Utils {
     public static final String CLIENT_NUM = "CLIENT_NUM";
     public static final String ERR_UNKNOWN = "ERR_UNKNOWN";
 
-    class GAME_MODE {
+    public class GAME_MODE {
         public static final int UNDEFINED = -1;
         public static final int SCREEN_MODE = 0;
-        public static final int CARD_MODE = 0;
+        public static final int CARD_MODE = 1;
     }
 
-    class CLIENT_COMMANDS {
+    public class CLIENT_COMMANDS {
         public static final String HOST_CONFIG = "HOST_CONFIG";
         public static final String ENTER_MSG = "SESSION_START";
         public static final String END_MSG = "SESSION_END";

@@ -2,6 +2,8 @@ package com.example.olesya.rxjavatest;
 
 import android.app.Activity;
 import android.arch.lifecycle.ViewModel;
+import android.content.Context;
+import android.content.Intent;
 import android.net.wifi.p2p.WifiP2pDevice;
 import android.support.v7.app.AlertDialog;
 import android.util.SparseBooleanArray;
@@ -10,6 +12,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.olesya.rxjavatest.view.CardActivity;
+import com.example.olesya.rxjavatest.view.ScreenActivity;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -27,15 +33,20 @@ public class MenuViewModel extends ViewModel {
         model = new MenuModel(menuFragment.getContext());
         weakFragment = new WeakReference<>(menuFragment);
         model.getAvailableDevices().observe(weakFragment.get(), deviceList -> updateListInDialog());
-        model.getMessage().observe(weakFragment.get(), v -> Utils.showAlert(weakFragment.get().getContext(),
-                model.getMessage().getValue()));
-        model.getReady().observe(weakFragment.get(), this::startGame);
+//        model.getMessage().observe(weakFragment.get(), v -> Utils.showAlert(weakFragment.get().getContext(),
+//                model.getMessage().getValue()));
     }
 
-    private void startGame(int gameMode) {
+    private void startGame(Context context, int gameMode) {
         if (gameMode == Utils.GAME_MODE.SCREEN_MODE) {
-            Activity
-        } else { //CLIENT_MODE
+            Intent intent = new Intent(context, ScreenActivity.class);
+            context.startActivity(intent);
+        } else if (gameMode == Utils.GAME_MODE.CARD_MODE) {
+            Intent intent = new Intent(context, CardActivity.class);
+            intent.putExtra(Utils.CLIENT_COMMANDS.HOST_CONFIG, model.getHostAddress());
+            context.startActivity(intent);
+        } else {
+            Toast.makeText(context, "choosen wrong mode", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -64,7 +75,7 @@ public class MenuViewModel extends ViewModel {
 
         peerDialogAdapter.clear();
         ArrayList<String> titles = new ArrayList<>();
-        for(WifiP2pDevice device : model.getAvailableDevices().getValue()) {
+        for (WifiP2pDevice device : model.getAvailableDevices().getValue()) {
             titles.add(device.deviceName);
         }
 
@@ -72,9 +83,9 @@ public class MenuViewModel extends ViewModel {
         peerDialogAdapter.notifyDataSetChanged();
         dialogView.findViewById(R.id.progress).setVisibility(View.GONE);
         if (titles.size() == 0) {
-            ((TextView)dialogView.findViewById(R.id.title)).setText("nothing found");
+            ((TextView) dialogView.findViewById(R.id.title)).setText("nothing found");
         } else {
-            ((TextView)dialogView.findViewById(R.id.title)).setText("found devices:");
+            ((TextView) dialogView.findViewById(R.id.title)).setText("found devices:");
         }
     }
 
@@ -91,8 +102,9 @@ public class MenuViewModel extends ViewModel {
                 .setView(dialogView);
     }
 
-    public View.OnClickListener getOnStartClickListener(Activity activity, Switch switcher) {
-        return v -> model.startServiceOnCondition(switcher.isChecked(), activity);
+    public View.OnClickListener getOnStartClickListener(Switch switcher) {
+        return v -> startGame(v.getContext(), switcher.isChecked() ?
+                Utils.GAME_MODE.SCREEN_MODE : Utils.GAME_MODE.CARD_MODE);
     }
 
     private ArrayList<WifiP2pDevice> getCheckedList(ListView listView) {
@@ -113,13 +125,13 @@ public class MenuViewModel extends ViewModel {
 
     public void onResume() {
         weakFragment.get().getActivity().registerReceiver(model.getReceiver(), model.getIntentFilter());
-        model.bindService(weakFragment.get().getActivity());
+
 //        weakFragment.get().getActivity().bindService(serviceIntent, sConn, Context.BIND_AUTO_CREATE);
     }
 
     public void onPause() {
         weakFragment.get().getActivity().unregisterReceiver(model.getReceiver());
-        model.unbindService(weakFragment.get().getActivity());
+//        model.unbindService(weakFragment.get().getActivity());
 //        if (bound) {
 //            getActivity().unbindService(sConn);
 //            bound = false;

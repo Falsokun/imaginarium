@@ -57,7 +57,7 @@ public class ClientHandler implements Runnable {
             ex.printStackTrace();
         }
         finally {
-            this.close();
+//            this.close();
         }
     }
     // отправляем сообщение

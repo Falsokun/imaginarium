@@ -20,7 +20,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".view.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -28,7 +28,12 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ScreenActivity" />
+        <activity
+            android:name=".view.ScreenActivity"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".view.CardActivity"
+            android:windowSoftInputMode="stateHidden" />
 
         <service android:name=".Server" />
         <service android:name=".Client" />

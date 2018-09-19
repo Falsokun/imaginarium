@@ -28,7 +28,7 @@ public class MenuFragment extends Fragment {
 
     private void initListeners() {
         mBinding.search.setOnClickListener(mvmodel.getOnSearchClickListener(getActivity()));
-        mBinding.start.setOnClickListener(mvmodel.getOnStartClickListener(getActivity(), mBinding.switcher));
+        mBinding.start.setOnClickListener(mvmodel.getOnStartClickListener(mBinding.switcher));
     }
 
     @Override

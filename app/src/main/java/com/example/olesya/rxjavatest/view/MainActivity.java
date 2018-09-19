@@ -1,15 +1,15 @@
-package com.example.olesya.rxjavatest;
+package com.example.olesya.rxjavatest.view;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.FrameLayout;
+
+import com.example.olesya.rxjavatest.MenuFragment;
+import com.example.olesya.rxjavatest.R;
 
 public class MainActivity extends AppCompatActivity {
 
