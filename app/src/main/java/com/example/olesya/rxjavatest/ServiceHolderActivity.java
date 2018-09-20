@@ -10,27 +10,33 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
-public class ServiceHolderActivity extends AppCompatActivity {
+public abstract class ServiceHolderActivity extends AppCompatActivity {
 
-    private BoundService mService;
+    protected BoundService mService;
     protected Intent mServiceIntent;
 
     private ServiceConnection serviceConn;
     private boolean serviceBound = false;
     public MutableLiveData<String> message = new MutableLiveData<>();
+    public MutableLiveData<String> serverMessage = new MutableLiveData<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initServiceConnection();
-        message.observe(this, v -> Utils.showAlert(this, message.getValue()));
+        message.observe(this, v -> {
+//            setData(v);
+            Utils.showAlert(this, message.getValue());
+        });
+
+        serverMessage.observe(this, v -> ((Client) mService).onUserAction(v));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         bindService(this);
-   }
+    }
 
     @Override
     protected void onPause() {
@@ -38,10 +44,13 @@ public class ServiceHolderActivity extends AppCompatActivity {
         unbindService(this);
     }
 
+    public abstract void setCallbacks();
+
     private void initServiceConnection() {
         serviceConn = new ServiceConnection() {
             public void onServiceConnected(ComponentName name, IBinder binder) {
                 mService = ((BoundService.MyBinder) binder).getService();
+                setCallbacks();
                 mService.setMessage(message);
                 serviceBound = true;
             }

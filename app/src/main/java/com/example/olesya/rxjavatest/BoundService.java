@@ -30,5 +30,4 @@ public class BoundService extends Service {
             return BoundService.this;
         }
     }
-
 }

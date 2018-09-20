@@ -5,6 +5,8 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
 
+import com.example.olesya.rxjavatest.interfaces.ClientCallback;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ConnectException;
@@ -18,7 +20,10 @@ public class Client extends BoundService {
     private Socket socketCl = new Socket();
     String host;
     private PrintWriter serverStream;
-    private Scanner inMessage ;
+    private Scanner inMessage;
+    private String clientState = Utils.CLIENT_COMMANDS.CLIENT_WAIT;
+    private String username;
+    private ClientCallback callback;
 
     public Client() {
         socketCl = new Socket();
@@ -35,15 +40,17 @@ public class Client extends BoundService {
     public int onStartCommand(Intent intent, int flags, int startId) {
         new Thread(() -> {
             if (intent == null || intent.getExtras() == null
-                    || intent.getExtras().getSerializable(Utils.CLIENT_COMMANDS.HOST_CONFIG) == null) {
+                    || intent.getExtras().getSerializable(Utils.CLIENT_CONFIG.HOST_CONFIG) == null) {
                 message.postValue(Utils.ERR_UNKNOWN);
                 //вообще тут бы выходить, но сервис вроде итак работу закончит??
                 return;
             }
 
-            host = ((InetAddress) intent.getExtras().getSerializable(Utils.CLIENT_COMMANDS.HOST_CONFIG)).getHostName();
+            host = ((InetAddress) intent.getExtras().getSerializable(Utils.CLIENT_CONFIG.HOST_CONFIG)).getHostName();
+            username = intent.getExtras().getString(Utils.CLIENT_CONFIG.USERNAME);
             openConnection();
-            sendMessage(Utils.CLIENT_COMMANDS.ENTER_MSG);
+            sendMessage(Utils.CLIENT_CONFIG.ENTER_MSG);
+            sendMessage(username);
             handleEvent();
         }).start();
         return super.onStartCommand(intent, flags, startId);
@@ -55,20 +62,15 @@ public class Client extends BoundService {
         }
 
         while (true) {
-            // Если от сервера пришло сообщение
             if (inMessage.hasNext()) {
                 String serverMsg = inMessage.nextLine();
                 // если сервер отправляет данное сообщение, то цикл прерывается и
                 // клиент выходит из чата
-                if (serverMsg.equalsIgnoreCase(Utils.CLIENT_COMMANDS.END_MSG)) {
+                if (serverMsg.equalsIgnoreCase(Utils.CLIENT_CONFIG.END_MSG)) {
                     break;
                 }
 
-                // выводим в консоль сообщение (для теста)
-//                System.out.println(serverMsg);
-                // отправляем данное сообщение всем клиентам
-                message.postValue(serverMsg);
-                //server.sendMessageToAllClients(clientMessage);
+                handleServerMessage(serverMsg);
             }
             try {
                 Thread.sleep(100);
@@ -107,18 +109,32 @@ public class Client extends BoundService {
         }
 
         serverStream.println(str);
-        message.postValue("send");
+    }
+
+    public void setCallbacks(ClientCallback callbacks) {
+        callback = callbacks;
     }
 
     public void onUserAction(String message) {
         new Thread(() -> sendMessage(message)).start();
     }
 
-//    private void stopConnection() {
-//        try {
-//            socketCl.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    private void handleServerMessage(String serverMsg) {
+        String action = serverMsg.split("#")[0];
+        switch (action) {
+            //ведущий
+            case Utils.CLIENT_COMMANDS.CLIENT_TURN:
+                callback.onUserTurnEvent();
+                break;
+            //пользователи выбирают
+            case Utils.CLIENT_COMMANDS.CLIENT_CHOOSE:
+                break;
+            case Utils.CLIENT_COMMANDS.CLIENT_WAIT:
+                break;
+            case Utils.CLIENT_COMMANDS.CLIENT_GET:
+                String card = serverMsg.split("#")[1];
+                callback.getCardCallback(card);
+                break;
+        }
+    }
 }

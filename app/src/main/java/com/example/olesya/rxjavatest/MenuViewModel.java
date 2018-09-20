@@ -43,7 +43,7 @@ public class MenuViewModel extends ViewModel {
             context.startActivity(intent);
         } else if (gameMode == Utils.GAME_MODE.CARD_MODE) {
             Intent intent = new Intent(context, CardActivity.class);
-            intent.putExtra(Utils.CLIENT_COMMANDS.HOST_CONFIG, model.getHostAddress());
+            intent.putExtra(Utils.CLIENT_CONFIG.HOST_CONFIG, model.getHostAddress());
             context.startActivity(intent);
         } else {
             Toast.makeText(context, "choosen wrong mode", Toast.LENGTH_SHORT).show();

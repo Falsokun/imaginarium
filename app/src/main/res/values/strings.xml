@@ -17,4 +17,6 @@
     <string name="screen">Screen</string>
     <string name="connecting">Connecting to device</string>
     <string name="player_status">Player status</string>
+    <string name="user_turn">User turn</string>
+    <string name="finish_turn">Waiting for choosing players options</string>
 </resources>

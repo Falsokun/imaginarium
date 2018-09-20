@@ -21,17 +21,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
-            <ListView
+            <android.support.v7.widget.RecyclerView
                 android:layout_below="@id/stats_title"
-                android:id="@+id/players_status"
+                android:id="@+id/players_status_rv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
         </RelativeLayout>
 
-        <RelativeLayout
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/card_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_centerInParent="true"
+            android:layoutDirection="ltr"
+            android:layout_marginBottom="100dp"
+            android:layout_marginTop="100dp" />
+
+        <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true">
             <EditText
                 android:id="@+id/test_msg"
                 android:layout_width="wrap_content"

@@ -1,34 +1,81 @@
 package com.example.olesya.rxjavatest.view;
 
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.widget.TextView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 
-import com.example.olesya.rxjavatest.Client;
+import com.example.olesya.rxjavatest.ItemTouchCallback;
 import com.example.olesya.rxjavatest.R;
 import com.example.olesya.rxjavatest.Server;
+import com.example.olesya.rxjavatest.adapter.CardPagerAdapter;
+import com.example.olesya.rxjavatest.interfaces.ServerCallback;
 import com.example.olesya.rxjavatest.ServiceHolderActivity;
 import com.example.olesya.rxjavatest.Utils;
+import com.example.olesya.rxjavatest.adapter.ListAdapter;
+import com.example.olesya.rxjavatest.databinding.ActivityScreenImaginariumBinding;
 
-public class ScreenActivity extends ServiceHolderActivity {
+import java.util.ArrayList;
+
+public class ScreenActivity extends ServiceHolderActivity implements ServerCallback {
+
+    private ActivityScreenImaginariumBinding mBinding;
+    private ListAdapter playerAdapter;
+    private CardPagerAdapter cardAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_screen_imaginarium);
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_screen_imaginarium);
+        initListView();
+        initCardPager();
         startServerService();
-
-        findViewById(R.id.button_send).setOnClickListener(v -> {
+        mBinding.buttonSend.setOnClickListener(v -> {
             Server server = (Server) getService();
-            String message = ((TextView) findViewById(R.id.test_msg)).getText().toString();
+            String message = mBinding.testMsg.getText().toString();
             server.onUserAction(message);
         });
     }
 
+    @Override
+    public void setCallbacks() {
+        ((Server)mService).setCallbacks(this);
+    }
+
+    private void initListView() {
+        //init player rv
+        ArrayList<String> str = new ArrayList<>();
+        playerAdapter = new ListAdapter(str);
+        mBinding.playersStatusRv.setAdapter(playerAdapter);
+        mBinding.playersStatusRv.setLayoutManager(new LinearLayoutManager(this));
+    }
+
+    private void initCardPager() {
+        RecyclerView recyclerView = findViewById(R.id.card_rv);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        cardAdapter = new CardPagerAdapter( new ArrayList<>(), serverMessage);
+        recyclerView.setAdapter(cardAdapter);
+//        ItemTouchHelper touchHelper = new ItemTouchHelper(new ItemTouchCallback(mAdapter));
+//        touchHelper.attachToRecyclerView(recyclerView);
+    }
+
     protected void startServerService() {
         mServiceIntent = new Intent(this, Server.class);
-        mServiceIntent.putExtra(Utils.ACTION_SERVER_SERVICE, true);
+        mServiceIntent.putExtra(Utils.CLIENT_NUM, 5);
         startService(mServiceIntent);
+    }
+
+    @Override
+    public void onAddUserEvent(String username) {
+        runOnUiThread(() -> playerAdapter.add(username));
+    }
+
+    @Override
+    public void onSelectedCardEvent(String card) {
+        runOnUiThread(() -> cardAdapter.addItem(card));
     }
 }

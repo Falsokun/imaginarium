@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import com.example.olesya.rxjavatest.interfaces.ServerCallback;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -13,8 +15,8 @@ public class Server extends BoundService {
 
     private ServerSocket serverSocket;
     private Socket clientSocket;
-    //для отображения в UI
-    private ArrayList<ClientHandler> clients = new ArrayList<>();
+    private ArrayList<CardHandler> clients = new ArrayList<>();
+    private ServerCallback serverCallbacks;
 
     public Server() {
     }
@@ -27,7 +29,6 @@ public class Server extends BoundService {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        int clientNumber = intent.getIntExtra(Utils.CLIENT_NUM, 0);
         try {
             serverSocket = new ServerSocket(PORT_NUMBER);
             new Thread(() -> {
@@ -45,31 +46,59 @@ public class Server extends BoundService {
     private void openConnection() {
         try {
             clientSocket = serverSocket.accept();
-            ClientHandler client = new ClientHandler(serverSocket.getInetAddress().getHostName(),
-                    clientSocket, this);
+            CardHandler client = new CardHandler(clientSocket, this);
             clients.add(client);
             new Thread(client).start();
         } catch (IOException e) {
+            message.postValue(e.getMessage());
         }
     }
 
+    //region events
+    public void onUserAction(String message) {
+        new Thread(() -> sendMessageToAllClients(message)).start();
+    }
+    //endregion
+
+    //region user communication
     public void showMessageFromClient(String clientName, String clientMessage) {
         message.postValue(clientName + ": " + clientMessage);
     }
 
-    public void onUserAction(String message) {
-        new Thread(() -> sendMessageToAllClients(message)).start();
-    }
-
-    // отправляем сообщение всем клиентам
     public void sendMessageToAllClients(String msg) {
-        for (ClientHandler o : clients) {
+        for (CardHandler o : clients) {
             o.sendMsg(msg);
         }
     }
 
-    // удаляем клиента из коллекции при выходе из чата
-    public void removeClient(ClientHandler client) {
-        clients.remove(client);
+    public void sendCardToUser(String user, String card) {
+        CardHandler ch = findUser(user);
+        if (ch == null) {
+            message.postValue("No user named " + user + "found");
+            return;
+        }
+
+        ch.sendMsg(Utils.CLIENT_COMMANDS.CLIENT_GET + "#" + card);
     }
+    //endregion
+
+    //region event utils
+    private CardHandler findUser(String user) {
+        for (CardHandler client : clients) {
+            if (client.getName().equals(user)) {
+                return client;
+            }
+        }
+
+        return null;
+    }
+
+    public void setCallbacks(ServerCallback callbacks) {
+        serverCallbacks = callbacks;
+    }
+
+    public ServerCallback getCallbacks() {
+        return serverCallbacks;
+    }
+    //endregion
 }
