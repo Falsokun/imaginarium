@@ -5,14 +5,13 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.widget.TextView;
 
+import com.example.olesya.rxjavatest.Card;
 import com.example.olesya.rxjavatest.Client;
 import com.example.olesya.rxjavatest.ItemTouchCallback;
 import com.example.olesya.rxjavatest.R;
-import com.example.olesya.rxjavatest.ServiceHolderActivity;
+import com.example.olesya.rxjavatest.ClassModels.ServiceHolderActivity;
 import com.example.olesya.rxjavatest.Utils;
 import com.example.olesya.rxjavatest.adapter.CardPagerAdapter;
 import com.example.olesya.rxjavatest.databinding.ActivityCardImaginariumBinding;
@@ -39,6 +38,7 @@ public class CardActivity extends ServiceHolderActivity  implements ClientCallba
             String message = mBinding.testMsg.getText().toString();
             client.onUserAction(message);
         });
+
         initCardPager();
     }
 
@@ -59,7 +59,8 @@ public class CardActivity extends ServiceHolderActivity  implements ClientCallba
     private void initCardPager() {
         mBinding.cardRv.setHasFixedSize(true);
         mBinding.cardRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        mAdapter = new CardPagerAdapter( new ArrayList<>(), serverMessage);
+        mAdapter = new CardPagerAdapter(new ArrayList<>());
+        mAdapter.setClientCallback(this);
         mBinding.cardRv.setAdapter(mAdapter);
         itemTouchCallback = new ItemTouchCallback(mAdapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(itemTouchCallback);
@@ -67,18 +68,39 @@ public class CardActivity extends ServiceHolderActivity  implements ClientCallba
     }
 
     @Override
-    public void getCardCallback(String card) {
-        runOnUiThread(() -> mAdapter.addItem(card));
+    public void getCardCallback(String cardUrl) {
+        runOnUiThread(() -> mAdapter.addItem(new Card(cardUrl)));
+    }
+
+    @Override
+    public void onMainTurnEvent() {
+        runOnUiThread(() -> mBinding.title.setText(R.string.choose_topic_and_card));
+        itemTouchCallback.setSwipeEnabled(true);
+        mAdapter.setMainCaller(true);
+    }
+
+    @Override
+    public void onMainFinishTurnEvent(String card) {
+        runOnUiThread(() -> mBinding.title.setText(R.string.waiting_others));
+        serverMessage.postValue(Utils.CLIENT_COMMANDS.CLIENT_MAIN_FINISHED + Utils.DELIM + card);
+        itemTouchCallback.setSwipeEnabled(false);
+    }
+
+    @Override
+    public void onUserChooseEvent() {
+        message.postValue("choose card which you think is appropriate");
     }
 
     @Override
     public void onUserTurnEvent() {
         runOnUiThread(() -> mBinding.title.setText(R.string.user_turn));
         itemTouchCallback.setSwipeEnabled(true);
+        mAdapter.setMainCaller(false);
     }
 
     @Override
-    public void onUserFinishTurnEvent() {
+    public void onUserFinishTurnEvent(String card) {
+        serverMessage.postValue(Utils.CLIENT_COMMANDS.CLIENT_USER_FINISHED + Utils.DELIM + card);
         runOnUiThread(() -> mBinding.title.setText(R.string.finish_turn));
         itemTouchCallback.setSwipeEnabled(false);
     }

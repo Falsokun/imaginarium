@@ -19,4 +19,6 @@
     <string name="player_status">Player status</string>
     <string name="user_turn">User turn</string>
     <string name="finish_turn">Waiting for choosing players options</string>
+    <string name="waiting_others">Waiting for other users</string>
+    <string name="choose_topic_and_card">Choose topic and card, your turn now</string>
 </resources>

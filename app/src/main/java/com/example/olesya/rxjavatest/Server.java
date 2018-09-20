@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import com.example.olesya.rxjavatest.ClassModels.BoundService;
 import com.example.olesya.rxjavatest.interfaces.ServerCallback;
 
 import java.io.IOException;
@@ -17,6 +18,8 @@ public class Server extends BoundService {
     private Socket clientSocket;
     private ArrayList<CardHandler> clients = new ArrayList<>();
     private ServerCallback serverCallbacks;
+    private int currentPosition = 0;
+    ArrayList<Integer> order;
 
     public Server() {
     }
@@ -35,12 +38,30 @@ public class Server extends BoundService {
                 for (int i = 0; i < 1; i++) { // TODO:!!!!!!!!
                     openConnection();
                 }
+
+                sendMessageToAllClients(Utils.CLIENT_COMMANDS.GAME_START);
+                choosePlayerOrder();
+                setTurnNextUser();
             }).start();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    private void setTurnNextUser() {
+        CardHandler client = clients.get(currentPosition);
+        currentPosition = (currentPosition + 1) % clients.size();
+        client.sendMsg(Utils.CLIENT_COMMANDS.CLIENT_MAIN_TURN);
+    }
+
+    //тут должна быть какая-то другая логика потом
+    private void choosePlayerOrder() {
+        order = new ArrayList<>();
+        for (int i = 0; i < clients.size(); i++) {
+            order.add(i);
+        }
     }
 
     private void openConnection() {
@@ -99,6 +120,23 @@ public class Server extends BoundService {
 
     public ServerCallback getCallbacks() {
         return serverCallbacks;
+    }
+
+    public void allowUsersToChoose(String clientName) {
+        for (CardHandler o : clients) {
+            if (!o.getName().equals(clientName)) {
+                o.sendMsg(Utils.CLIENT_COMMANDS.CLIENT_USER_TURN);
+            }
+        }
+    }
+
+    public void chooseRound() {
+        String name = clients.get(order.get(currentPosition)).getName();
+        for (CardHandler o : clients) {
+            if (!o.getName().equals(name)) {
+                o.sendMsg(Utils.CLIENT_COMMANDS.CLIENT_CHOOSE);
+            }
+        }
     }
     //endregion
 }

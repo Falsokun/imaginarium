@@ -1,4 +1,4 @@
-package com.example.olesya.rxjavatest;
+package com.example.olesya.rxjavatest.ClassModels;
 
 import android.app.Service;
 import android.arch.lifecycle.MutableLiveData;

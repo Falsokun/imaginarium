@@ -5,6 +5,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
 
+import com.example.olesya.rxjavatest.ClassModels.BoundService;
 import com.example.olesya.rxjavatest.interfaces.ClientCallback;
 
 import java.io.IOException;
@@ -123,14 +124,15 @@ public class Client extends BoundService {
         String action = serverMsg.split("#")[0];
         switch (action) {
             //ведущий
-            case Utils.CLIENT_COMMANDS.CLIENT_TURN:
+            case Utils.CLIENT_COMMANDS.CLIENT_MAIN_TURN:
+                callback.onMainTurnEvent();
+                break;
+            case Utils.CLIENT_COMMANDS.CLIENT_USER_TURN:
                 callback.onUserTurnEvent();
                 break;
-            //пользователи выбирают
             case Utils.CLIENT_COMMANDS.CLIENT_CHOOSE:
-                break;
-            case Utils.CLIENT_COMMANDS.CLIENT_WAIT:
-                break;
+                callback.onUserChooseEvent();
+            //пользователь получил новую карту
             case Utils.CLIENT_COMMANDS.CLIENT_GET:
                 String card = serverMsg.split("#")[1];
                 callback.getCardCallback(card);

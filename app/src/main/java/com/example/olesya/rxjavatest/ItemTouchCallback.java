@@ -41,4 +41,5 @@ public class ItemTouchCallback extends ItemTouchHelper.Callback {
     public void setSwipeEnabled(boolean isSwipeEnabled) {
         this.isSwipeEnabled = isSwipeEnabled;
     }
+
 }

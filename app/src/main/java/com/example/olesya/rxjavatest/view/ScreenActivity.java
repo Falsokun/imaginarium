@@ -6,14 +6,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 
-import com.example.olesya.rxjavatest.ItemTouchCallback;
+import com.example.olesya.rxjavatest.Card;
 import com.example.olesya.rxjavatest.R;
 import com.example.olesya.rxjavatest.Server;
 import com.example.olesya.rxjavatest.adapter.CardPagerAdapter;
 import com.example.olesya.rxjavatest.interfaces.ServerCallback;
-import com.example.olesya.rxjavatest.ServiceHolderActivity;
+import com.example.olesya.rxjavatest.ClassModels.ServiceHolderActivity;
 import com.example.olesya.rxjavatest.Utils;
 import com.example.olesya.rxjavatest.adapter.ListAdapter;
 import com.example.olesya.rxjavatest.databinding.ActivityScreenImaginariumBinding;
@@ -57,7 +56,7 @@ public class ScreenActivity extends ServiceHolderActivity implements ServerCallb
         RecyclerView recyclerView = findViewById(R.id.card_rv);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        cardAdapter = new CardPagerAdapter( new ArrayList<>(), serverMessage);
+        cardAdapter = new CardPagerAdapter(new ArrayList<>());
         recyclerView.setAdapter(cardAdapter);
 //        ItemTouchHelper touchHelper = new ItemTouchHelper(new ItemTouchCallback(mAdapter));
 //        touchHelper.attachToRecyclerView(recyclerView);
@@ -75,7 +74,14 @@ public class ScreenActivity extends ServiceHolderActivity implements ServerCallb
     }
 
     @Override
-    public void onSelectedCardEvent(String card) {
+    public void onSelectedCardEvent(Card card) {
         runOnUiThread(() -> cardAdapter.addItem(card));
+    }
+
+    @Override
+    public void checkForAllCardsOnDesk() {
+        if (cardAdapter.getItemCount() == playerAdapter.getItemCount()) {
+            ((Server) mService).chooseRound();
+        }
     }
 }

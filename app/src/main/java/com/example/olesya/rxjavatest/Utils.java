@@ -30,11 +30,15 @@ public class Utils {
     }
 
     public class CLIENT_COMMANDS {
-        public static final String SELECTED = "SELECTED";
         public static final String CLIENT_CHOOSE = "CLIENT_CHOOSE";
         public static final String CLIENT_GET = "CLIENT_GET";
         public static final String CLIENT_WAIT = "CLIENT_WAIT";
-        public static final String CLIENT_TURN = "CLIENT_TURN";
+        public static final String GAME_START = "GAME_START";
+
+        public static final String CLIENT_MAIN_FINISHED = "CLIENT_MAIN_FINISHED";
+        public static final String CLIENT_MAIN_TURN = "CLIENT_MAIN_TURN";
+        public static final String CLIENT_USER_FINISHED = "CLIENT_USER_FINISHED";
+        public static final String CLIENT_USER_TURN = "CLIENT_USER_TURN";
     }
 
     public static boolean isWifiEnabled(@NonNull Context context) {

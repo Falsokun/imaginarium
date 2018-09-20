@@ -65,11 +65,18 @@ public class CardHandler implements Runnable {
 
     private void handleClientMessage(String clientMessage) {
         String action = clientMessage.split("#")[0];
+        String card;
         switch (action) {
-            case Utils.CLIENT_COMMANDS.SELECTED:
-                String card = clientMessage.split(Utils.DELIM)[1];
-                server.getCallbacks().onSelectedCardEvent(card);
+            case Utils.CLIENT_COMMANDS.CLIENT_MAIN_FINISHED:
+                card = clientMessage.split(Utils.DELIM)[1];
+                server.getCallbacks().onSelectedCardEvent(new Card(card, clientName));
+                server.allowUsersToChoose(clientName);
 //                server.showMessageFromClient(clientName, action);
+                break;
+            case Utils.CLIENT_COMMANDS.CLIENT_USER_FINISHED:
+                card = clientMessage.split(Utils.DELIM)[1];
+                server.getCallbacks().onSelectedCardEvent(new Card(card, clientName));
+                server.getCallbacks().checkForAllCardsOnDesk();
                 break;
         }
     }

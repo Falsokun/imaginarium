@@ -1,25 +1,24 @@
 package com.example.olesya.rxjavatest.adapter;
 
-import android.arch.lifecycle.MutableLiveData;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.olesya.rxjavatest.Card;
 import com.example.olesya.rxjavatest.R;
-import com.example.olesya.rxjavatest.Utils;
+import com.example.olesya.rxjavatest.interfaces.ClientCallback;
 
 import java.util.ArrayList;
 
 public class CardPagerAdapter extends RecyclerView.Adapter<CardPagerAdapter.Holder> {
-    private ArrayList<String> mDataSet;
-    private MutableLiveData<String> serverMessage;
+    private ArrayList<Card> mDataSet;
+    private ClientCallback clientCallback;
+    private boolean isMainCaller;
 
-    public CardPagerAdapter(ArrayList<String> dataset, MutableLiveData<String> message) {
+    public CardPagerAdapter(ArrayList<Card> dataset) {
         mDataSet = dataset;
-        serverMessage = message;
     }
 
     @Override
@@ -27,13 +26,12 @@ public class CardPagerAdapter extends RecyclerView.Adapter<CardPagerAdapter.Hold
                                                       int viewType) {
         FrameLayout v = (FrameLayout) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.layout_card, parent, false);
-        Holder vh = new Holder(v);
-        return vh;
+        return new Holder(v);
     }
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
-        holder.getText().setText(mDataSet.get(position));
+        holder.getText().setText(mDataSet.get(position).getImg());
     }
 
     @Override
@@ -42,28 +40,42 @@ public class CardPagerAdapter extends RecyclerView.Adapter<CardPagerAdapter.Hold
     }
 
     public void onRemove(int adapterPosition) {
-        String res = mDataSet.remove(adapterPosition);
+        Card res = mDataSet.remove(adapterPosition);
         notifyItemRemoved(adapterPosition);
-        serverMessage.postValue(Utils.CLIENT_COMMANDS.SELECTED + "#" + res);
+        if (clientCallback != null) {
+            if (isMainCaller) {
+                clientCallback.onMainFinishTurnEvent(res.getImg());
+            } else {
+                clientCallback.onUserFinishTurnEvent(res.getImg());
+            }
+        }
     }
 
-    public void addItem(String card) {
+    public void addItem(Card card) {
         mDataSet.add(card);
         notifyItemInserted(mDataSet.size() - 1);
     }
 
+    public void setMainCaller(boolean mainCaller) {
+        this.isMainCaller = mainCaller;
+    }
+
     public static class Holder extends RecyclerView.ViewHolder {
-        public ImageView img;
+//        public ImageView img;
         public TextView text;
 
         public Holder(FrameLayout v) {
             super(v);
-            img = v.findViewById(R.id.img_source);
+//            img = v.findViewById(R.id.img_source);
             text = v.findViewById(R.id.card_txt);
         }
 
         public TextView getText() {
             return text;
         }
+    }
+
+    public void setClientCallback(ClientCallback callback) {
+        clientCallback = callback;
     }
 }

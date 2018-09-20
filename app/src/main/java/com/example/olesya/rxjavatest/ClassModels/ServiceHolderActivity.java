@@ -1,4 +1,4 @@
-package com.example.olesya.rxjavatest;
+package com.example.olesya.rxjavatest.ClassModels;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.content.ComponentName;
@@ -9,6 +9,9 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+
+import com.example.olesya.rxjavatest.Client;
+import com.example.olesya.rxjavatest.Utils;
 
 public abstract class ServiceHolderActivity extends AppCompatActivity {
 
