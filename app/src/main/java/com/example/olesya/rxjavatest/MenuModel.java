@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.NetworkInfo;
 import android.net.wifi.WpsInfo;
 import android.net.wifi.p2p.WifiP2pConfig;
 import android.net.wifi.p2p.WifiP2pDevice;
@@ -61,13 +62,35 @@ public class MenuModel {
                     } else {
                     }
                 } else if (WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION.equals(action)) {
-//                    mManager.requestPeers(mChannel, wifiP2pDeviceList ->
-//                            availableDevices.setValue(new ArrayList<>(wifiP2pDeviceList.getDeviceList())));
+                    //peers discovered
+//                    Toast.makeText(context, "peers discovered", Toast.LENGTH_SHORT).show();
+                    mManager.requestPeers(mChannel, wifiP2pDeviceList ->
+                            availableDevices.setValue(new ArrayList<>(wifiP2pDeviceList.getDeviceList())));
                 } else if (WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION.equals(action)) {
+                    requestInfo(intent);
                 } else if (WifiP2pManager.WIFI_P2P_THIS_DEVICE_CHANGED_ACTION.equals(action)) {
                 }
             }
         };
+    }
+
+    private void requestInfo(Intent intent) {
+        if (mManager == null) {
+            return;
+        }
+
+        NetworkInfo networkInfo = intent.getParcelableExtra(WifiP2pManager.EXTRA_NETWORK_INFO);
+
+        if (networkInfo.isConnected()) {
+            // We are connected with the other device, request connection
+            // info to find group owner IP
+            mManager.requestConnectionInfo(mChannel, new WifiP2pManager.ConnectionInfoListener() {
+                @Override
+                public void onConnectionInfoAvailable(WifiP2pInfo info) {
+
+                }
+            });
+        }
     }
 
     /**
@@ -76,17 +99,21 @@ public class MenuModel {
      * @param deviceList - list of devices to connect
      */
     public void connectToDevices(Context context, ArrayList<WifiP2pDevice> deviceList) {
+        if (deviceList == null) {
+            return;
+        }
+
         WifiP2pDevice device;
         device = deviceList.get(0);
         WifiP2pConfig config = new WifiP2pConfig();
         config.deviceAddress = device.deviceAddress;
         config.wps.setup = WpsInfo.PBC;
+        config.groupOwnerIntent = 0; //not group owner but client
 
         mManager.connect(mChannel, config, new WifiP2pManager.ActionListener() {
             @Override
             public void onSuccess() {
                 mManager.requestConnectionInfo(mChannel, new WifiP2pManager.ConnectionInfoListener() {
-
                     @Override
                     public void onConnectionInfoAvailable(WifiP2pInfo info) {
                         if (info.groupOwnerAddress!=null) {
@@ -112,18 +139,8 @@ public class MenuModel {
     /**
      * Request available peers and set result into {@link #availableDevices}
      */
-    public void requestPeers() {
-        mManager.discoverPeers(mChannel, new WifiP2pManager.ActionListener() {
-            @Override
-            public void onSuccess() {
-                mManager.requestPeers(mChannel, wifiP2pDeviceList ->
-                        availableDevices.setValue(new ArrayList<>(wifiP2pDeviceList.getDeviceList())));
-            }
-
-            @Override
-            public void onFailure(int reasonCode) {
-            }
-        });
+    public void discoverPeers() {
+        mManager.discoverPeers(mChannel, null);
     }
 
     public IntentFilter getIntentFilter() {

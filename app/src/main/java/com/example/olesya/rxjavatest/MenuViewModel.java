@@ -1,10 +1,13 @@
 package com.example.olesya.rxjavatest;
 
+import android.Manifest;
 import android.app.Activity;
 import android.arch.lifecycle.ViewModel;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.wifi.p2p.WifiP2pDevice;
+import android.os.Build;
 import android.support.v7.app.AlertDialog;
 import android.util.SparseBooleanArray;
 import android.view.View;
@@ -37,20 +40,21 @@ public class MenuViewModel extends ViewModel {
 //                model.getMessage().getValue()));
     }
 
-    private void startGame(Context context, int gameMode) {
+    private void startGame(Context context, String username, int gameMode) {
         if (gameMode == Utils.GAME_MODE.SCREEN_MODE) {
             Intent intent = new Intent(context, ScreenActivity.class);
             context.startActivity(intent);
         } else if (gameMode == Utils.GAME_MODE.CARD_MODE) {
             Intent intent = new Intent(context, CardActivity.class);
             intent.putExtra(Utils.CLIENT_CONFIG.HOST_CONFIG, model.getHostAddress());
+            intent.putExtra(Utils.CLIENT_CONFIG.USERNAME, username);
             context.startActivity(intent);
         } else {
             Toast.makeText(context, "choosen wrong mode", Toast.LENGTH_SHORT).show();
         }
     }
 
-    public View.OnClickListener getOnSearchClickListener(Activity context) {
+    public View.OnClickListener getOnSearchClickListener(Activity context, MenuFragment fragment) {
         return v -> {
             if (!Utils.isWifiEnabled(context)) {
                 Utils.showAlert(context, context.getString(R.string.wifi_disabled_retry));
@@ -64,8 +68,18 @@ public class MenuViewModel extends ViewModel {
                     .create()
                     .show();
 
-            model.requestPeers();
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                    && context.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                fragment.requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                        Utils.PERMISSIONS_REQUEST_CODE_ACCESS_COARSE_LOCATION);
+            } else {
+                model.discoverPeers();
+            }
         };
+    }
+
+    public void requestPeers() {
+        model.discoverPeers();
     }
 
     private void updateListInDialog() {
@@ -83,9 +97,9 @@ public class MenuViewModel extends ViewModel {
         peerDialogAdapter.notifyDataSetChanged();
         dialogView.findViewById(R.id.progress).setVisibility(View.GONE);
         if (titles.size() == 0) {
-            ((TextView) dialogView.findViewById(R.id.title)).setText("nothing found");
+            ((TextView) dialogView.findViewById(R.id.title)).setText(R.string.nothing_found);
         } else {
-            ((TextView) dialogView.findViewById(R.id.title)).setText("found devices:");
+            ((TextView) dialogView.findViewById(R.id.title)).setText(R.string.found_devices);
         }
     }
 
@@ -102,8 +116,8 @@ public class MenuViewModel extends ViewModel {
                 .setView(dialogView);
     }
 
-    public View.OnClickListener getOnStartClickListener(Switch switcher) {
-        return v -> startGame(v.getContext(), switcher.isChecked() ?
+    public View.OnClickListener getOnStartClickListener(Switch switcher, TextView username) {
+        return v -> startGame(v.getContext(), username.getText().toString(), switcher.isChecked() ?
                 Utils.GAME_MODE.SCREEN_MODE : Utils.GAME_MODE.CARD_MODE);
     }
 
@@ -131,10 +145,9 @@ public class MenuViewModel extends ViewModel {
 
     public void onPause() {
         weakFragment.get().getActivity().unregisterReceiver(model.getReceiver());
-//        model.unbindService(weakFragment.get().getActivity());
-//        if (bound) {
-//            getActivity().unbindService(sConn);
-//            bound = false;
-//        }
+    }
+
+    public void discoverPeers() {
+        model.discoverPeers();
     }
 }

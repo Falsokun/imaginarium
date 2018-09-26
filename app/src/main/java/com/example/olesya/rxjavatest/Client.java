@@ -18,7 +18,7 @@ import java.util.Scanner;
 
 public class Client extends BoundService {
 
-    private Socket socketCl = new Socket();
+    private Socket socketCl;
     String host;
     private PrintWriter serverStream;
     private Scanner inMessage;
@@ -27,7 +27,6 @@ public class Client extends BoundService {
     private ClientCallback callback;
 
     public Client() {
-        socketCl = new Socket();
     }
 
     @Nullable
@@ -87,9 +86,9 @@ public class Client extends BoundService {
              * Create a client socket with the host,
              * port, and timeout information.
              */
-//            if (socketCl.isBound() || socketCl.isConnected()) {
-//                socketCl.close();
-//            }
+            if (socketCl == null || socketCl.isClosed() || socketCl.isConnected()) {
+                socketCl = new Socket();
+            }
 
             socketCl.setReuseAddress(true);
             socketCl.bind(null);
@@ -121,7 +120,7 @@ public class Client extends BoundService {
     }
 
     private void handleServerMessage(String serverMsg) {
-        String action = serverMsg.split("#")[0];
+        String action = serverMsg.split(Utils.DELIM)[0];
         switch (action) {
             //ведущий
             case Utils.CLIENT_COMMANDS.CLIENT_MAIN_TURN:
@@ -132,11 +131,24 @@ public class Client extends BoundService {
                 break;
             case Utils.CLIENT_COMMANDS.CLIENT_CHOOSE:
                 callback.onUserChooseEvent();
-            //пользователь получил новую карту
+                //пользователь получил новую карту
             case Utils.CLIENT_COMMANDS.CLIENT_GET:
-                String card = serverMsg.split("#")[1];
+                String card = serverMsg.split(Utils.DELIM)[1];
                 callback.getCardCallback(card);
                 break;
+            case Utils.CLIENT_CONFIG.USERNAME_CHANGED:
+                username = serverMsg.split(Utils.DELIM)[1];
+                break;
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        try {
+            socketCl.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

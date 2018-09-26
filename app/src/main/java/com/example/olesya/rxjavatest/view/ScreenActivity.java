@@ -48,6 +48,7 @@ public class ScreenActivity extends ServiceHolderActivity implements ServerCallb
         //init player rv
         ArrayList<String> str = new ArrayList<>();
         playerAdapter = new ListAdapter(str);
+        mBinding.playersStatusRv.setHasFixedSize(false);
         mBinding.playersStatusRv.setAdapter(playerAdapter);
         mBinding.playersStatusRv.setLayoutManager(new LinearLayoutManager(this));
     }

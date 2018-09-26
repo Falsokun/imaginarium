@@ -39,7 +39,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.Holder> {
 
     public void add(String username) {
         mDataSet.add(username);
-        notifyItemRangeInserted(mDataSet.size() - 1, 1);
+        notifyItemRangeChanged(mDataSet.size()-1,1);
     }
 
     public static class Holder extends RecyclerView.ViewHolder {

@@ -20,7 +20,7 @@ import com.example.olesya.rxjavatest.interfaces.ClientCallback;
 import java.net.InetAddress;
 import java.util.ArrayList;
 
-public class CardActivity extends ServiceHolderActivity  implements ClientCallback {
+public class CardActivity extends ServiceHolderActivity implements ClientCallback {
 
     private CardPagerAdapter mAdapter;
     private ItemTouchCallback itemTouchCallback;
@@ -29,10 +29,13 @@ public class CardActivity extends ServiceHolderActivity  implements ClientCallba
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        String username = null;
+        if (getIntent().getExtras() != null)
+            username = getIntent().getExtras().getString(Utils.CLIENT_CONFIG.USERNAME);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_card_imaginarium);
         InetAddress screenAddress = (InetAddress) getIntent()
                 .getSerializableExtra(Utils.CLIENT_CONFIG.HOST_CONFIG);
-        startClientService(screenAddress);
+        startClientService(screenAddress, username);
         mBinding.buttonSend.setOnClickListener(v -> {
             Client client = (Client) getService();
             String message = mBinding.testMsg.getText().toString();
@@ -44,14 +47,14 @@ public class CardActivity extends ServiceHolderActivity  implements ClientCallba
 
     @Override
     public void setCallbacks() {
-        ((Client)mService).setCallbacks(this);
+        ((Client) mService).setCallbacks(this);
     }
 
-    protected void startClientService(InetAddress screenAddress) {
+    protected void startClientService(InetAddress screenAddress, String username) {
         mServiceIntent = new Intent(this, Client.class);
         mServiceIntent.putExtra(Utils.ACTION_SERVER_SERVICE, false);
         mServiceIntent.putExtra(Utils.CLIENT_CONFIG.HOST_CONFIG, screenAddress);
-        mServiceIntent.putExtra(Utils.CLIENT_CONFIG.USERNAME, "player1");
+        mServiceIntent.putExtra(Utils.CLIENT_CONFIG.USERNAME, username);
         startService(mServiceIntent);
         bindService(this);
     }
@@ -103,5 +106,11 @@ public class CardActivity extends ServiceHolderActivity  implements ClientCallba
         serverMessage.postValue(Utils.CLIENT_COMMANDS.CLIENT_USER_FINISHED + Utils.DELIM + card);
         runOnUiThread(() -> mBinding.title.setText(R.string.finish_turn));
         itemTouchCallback.setSwipeEnabled(false);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ((Client) getService()).onDestroy();
     }
 }

@@ -47,7 +47,12 @@ public class CardHandler implements Runnable {
 
     private void acceptUserEvent() {
         String session = inMessage.nextLine();
-        this.clientName = inMessage.nextLine();
+        String username = inMessage.nextLine();
+        this.clientName = server.checkNames(username, 0);
+        if (!clientName.equals(username)) {
+            sendMsg(Utils.CLIENT_CONFIG.USERNAME_CHANGED + Utils.DELIM + clientName);
+        }
+
         server.getCallbacks().onAddUserEvent(clientName);
     }
 

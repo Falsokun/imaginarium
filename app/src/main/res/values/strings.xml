@@ -15,10 +15,13 @@
     <string name="wifi_disabled_retry">Wifi disabled. Turn on Wifi and retry</string>
     <string name="cancel">Cancel</string>
     <string name="screen">Screen</string>
-    <string name="connecting">Connecting to device</string>
+    <string name="connecting">Connecting to device.</string>
     <string name="player_status">Player status</string>
     <string name="user_turn">User turn</string>
     <string name="finish_turn">Waiting for choosing players options</string>
     <string name="waiting_others">Waiting for other users</string>
     <string name="choose_topic_and_card">Choose topic and card, your turn now</string>
+    <string name="nothing_found">Nothing found\\nHint: if nothing is found, may be other device is not searching</string>
+    <string name="found_devices">found devices:</string>
+    <string name="no_one_connected_to">No one connected to</string>
 </resources>

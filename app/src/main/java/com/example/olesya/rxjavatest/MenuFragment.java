@@ -1,5 +1,6 @@
 package com.example.olesya.rxjavatest;
 
+import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 
 import com.example.olesya.rxjavatest.databinding.FragmentMenuBinding;
 
@@ -27,8 +29,29 @@ public class MenuFragment extends Fragment {
     }
 
     private void initListeners() {
-        mBinding.search.setOnClickListener(mvmodel.getOnSearchClickListener(getActivity()));
-        mBinding.start.setOnClickListener(mvmodel.getOnStartClickListener(mBinding.switcher));
+        mBinding.search.setOnClickListener(mvmodel.getOnSearchClickListener(getActivity(), this));
+        mBinding.start.setOnClickListener(mvmodel.getOnStartClickListener(mBinding.switcher, mBinding.playerName));
+        mBinding.switcher.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                mBinding.statusMsg.setText("Server, waiting for connections");
+                mBinding.search.setVisibility(View.GONE);
+                mBinding.playerName.setVisibility(View.GONE);
+                mvmodel.discoverPeers();
+            } else {
+                mBinding.search.setVisibility(View.VISIBLE);
+                mBinding.playerName.setVisibility(View.VISIBLE);
+                mBinding.statusMsg.setText(R.string.no_one_connected_to);
+            }
+        });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        if (requestCode == Utils.PERMISSIONS_REQUEST_CODE_ACCESS_COARSE_LOCATION
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            mvmodel.requestPeers();
+        }
     }
 
     @Override

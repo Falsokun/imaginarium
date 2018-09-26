@@ -35,7 +35,7 @@ public class Server extends BoundService {
         try {
             serverSocket = new ServerSocket(PORT_NUMBER);
             new Thread(() -> {
-                for (int i = 0; i < 1; i++) { // TODO:!!!!!!!!
+                for (int i = 0; i < 2; i++) { // TODO:!!!!!!!!
                     openConnection();
                 }
 
@@ -137,6 +137,16 @@ public class Server extends BoundService {
                 o.sendMsg(Utils.CLIENT_COMMANDS.CLIENT_CHOOSE);
             }
         }
+    }
+
+    public String checkNames(String s, int i) {
+        for (CardHandler card : clients) {
+            if (s.equals(card.getName())) {
+                return checkNames(s + i, i + 1);
+            }
+        }
+
+        return s;
     }
     //endregion
 }
