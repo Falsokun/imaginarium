@@ -8,6 +8,7 @@ public interface ServerCallback {
 
     void onSelectedCardEvent(Card username);
 
-    //проверяет все ли пользователи положили карты на стол
-    void checkForAllCardsOnDesk();
+    void uncoverCardsAnimation();
+
+    void onUserTurnFinished(Card card);
 }

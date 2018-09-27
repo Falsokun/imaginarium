@@ -12,6 +12,7 @@ import android.support.v7.app.AlertDialog;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -40,9 +41,11 @@ public class MenuViewModel extends ViewModel {
 //                model.getMessage().getValue()));
     }
 
-    private void startGame(Context context, String username, int gameMode) {
+    private void startGame(Context context, String username, int gameMode, int playerNum, int ptsToWin) {
         if (gameMode == Utils.GAME_MODE.SCREEN_MODE) {
             Intent intent = new Intent(context, ScreenActivity.class);
+            intent.putExtra(Utils.CLIENT_NUM, playerNum);
+            intent.putExtra(Utils.WIN_PTS, ptsToWin);
             context.startActivity(intent);
         } else if (gameMode == Utils.GAME_MODE.CARD_MODE) {
             Intent intent = new Intent(context, CardActivity.class);
@@ -68,8 +71,8 @@ public class MenuViewModel extends ViewModel {
                     .create()
                     .show();
 
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-                    && context.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                    && context.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 fragment.requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                         Utils.PERMISSIONS_REQUEST_CODE_ACCESS_COARSE_LOCATION);
             } else {
@@ -116,9 +119,20 @@ public class MenuViewModel extends ViewModel {
                 .setView(dialogView);
     }
 
-    public View.OnClickListener getOnStartClickListener(Switch switcher, TextView username) {
-        return v -> startGame(v.getContext(), username.getText().toString(), switcher.isChecked() ?
-                Utils.GAME_MODE.SCREEN_MODE : Utils.GAME_MODE.CARD_MODE);
+    public View.OnClickListener getOnStartClickListener(Switch switcher, TextView username,
+                                                        TextView players, TextView pts) {
+        return v -> {
+            int mode = switcher.isChecked() ?
+                    Utils.GAME_MODE.SCREEN_MODE : Utils.GAME_MODE.CARD_MODE;
+            int personsNum = Integer.valueOf(players.getText().toString());
+            if (personsNum > 5 || personsNum < 2) {
+                Toast.makeText(v.getContext(), R.string.err_persons_num, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            int winPts = Integer.valueOf(pts.getText().toString());
+            startGame(v.getContext(), username.getText().toString(), mode, personsNum, winPts);
+        };
     }
 
     private ArrayList<WifiP2pDevice> getCheckedList(ListView listView) {

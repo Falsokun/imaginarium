@@ -24,4 +24,7 @@
     <string name="nothing_found">Nothing found\\nHint: if nothing is found, may be other device is not searching</string>
     <string name="found_devices">found devices:</string>
     <string name="no_one_connected_to">No one connected to</string>
+    <string name="most_suitable_card">Create card which is the most suitable to the topic</string>
+    <string name="finish_round">Finish round</string>
+    <string name="err_persons_num">invalid persons num</string>
 </resources>

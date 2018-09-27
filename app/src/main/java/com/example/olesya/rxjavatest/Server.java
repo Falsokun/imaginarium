@@ -20,6 +20,7 @@ public class Server extends BoundService {
     private ServerCallback serverCallbacks;
     private int currentPosition = 0;
     ArrayList<Integer> order;
+    private int winPts = 100;
 
     public Server() {
     }
@@ -34,8 +35,11 @@ public class Server extends BoundService {
     public int onStartCommand(Intent intent, int flags, int startId) {
         try {
             serverSocket = new ServerSocket(PORT_NUMBER);
+
+            int playerNum = intent.getExtras().getInt(Utils.CLIENT_NUM);
+            winPts = intent.getExtras().getInt(Utils.WIN_PTS);
             new Thread(() -> {
-                for (int i = 0; i < 2; i++) { // TODO:!!!!!!!!
+                for (int i = 0; i < playerNum; i++) { // TODO:!!!!!!!!
                     openConnection();
                 }
 
@@ -52,7 +56,6 @@ public class Server extends BoundService {
 
     private void setTurnNextUser() {
         CardHandler client = clients.get(currentPosition);
-        currentPosition = (currentPosition + 1) % clients.size();
         client.sendMsg(Utils.CLIENT_COMMANDS.CLIENT_MAIN_TURN);
     }
 
@@ -130,23 +133,51 @@ public class Server extends BoundService {
         }
     }
 
-    public void chooseRound() {
-        String name = clients.get(order.get(currentPosition)).getName();
-        for (CardHandler o : clients) {
-            if (!o.getName().equals(name)) {
-                o.sendMsg(Utils.CLIENT_COMMANDS.CLIENT_CHOOSE);
+    /**
+     * этап, когда пользователи выбирают одну карту со стола
+     */
+    public void startChoosingStep() {
+        new Thread(() -> {
+            String name = getCurrentMainUser().getName();
+            for (CardHandler o : clients) {
+                if (!o.getName().equals(name)) {
+                    o.sendMsg(Utils.CLIENT_COMMANDS.CLIENT_USER_CHOOSE + Utils.DELIM + clients.size());
+                }
             }
-        }
+        }).start();
     }
 
-    public String checkNames(String s, int i) {
+    public String getAvailableUsername(String suggestedUsername, int i) {
         for (CardHandler card : clients) {
-            if (s.equals(card.getName())) {
-                return checkNames(s + i, i + 1);
+            if (suggestedUsername.equals(card.getName())) {
+                return getAvailableUsername(suggestedUsername + i, i + 1);
             }
         }
 
-        return s;
+        return suggestedUsername;
     }
+
+    public CardHandler getCurrentMainUser() {
+        return clients.get(order.get(currentPosition));
+    }
+
+    public void checkForAllUsersChoice() {
+        boolean isAllChosen = true;
+        String currentMainUser = getCurrentMainUser().getName();
+        for (CardHandler user : clients) {
+            if (user.getName().equals(currentMainUser))
+                continue;
+
+            if (user.getChoice() == -1) {
+                isAllChosen = false;
+                break;
+            }
+        }
+
+        if (isAllChosen) {
+            getCurrentMainUser().sendMsg(Utils.CLIENT_COMMANDS.CLIENT_MAIN_STOP);
+        }
+    }
+
     //endregion
 }

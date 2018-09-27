@@ -1,17 +1,22 @@
 package com.example.olesya.rxjavatest.view;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Range;
+import android.view.View;
+import android.widget.NumberPicker;
 
 import com.example.olesya.rxjavatest.Card;
+import com.example.olesya.rxjavatest.ClassModels.ServiceHolderActivity;
 import com.example.olesya.rxjavatest.Client;
 import com.example.olesya.rxjavatest.ItemTouchCallback;
 import com.example.olesya.rxjavatest.R;
-import com.example.olesya.rxjavatest.ClassModels.ServiceHolderActivity;
 import com.example.olesya.rxjavatest.Utils;
 import com.example.olesya.rxjavatest.adapter.CardPagerAdapter;
 import com.example.olesya.rxjavatest.databinding.ActivityCardImaginariumBinding;
@@ -19,6 +24,13 @@ import com.example.olesya.rxjavatest.interfaces.ClientCallback;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import github.hellocsl.layoutmanager.gallery.GalleryLayoutManager;
+import jp.wasabeef.recyclerview.animators.FadeInDownAnimator;
+import jp.wasabeef.recyclerview.animators.SlideInDownAnimator;
 
 public class CardActivity extends ServiceHolderActivity implements ClientCallback {
 
@@ -62,6 +74,9 @@ public class CardActivity extends ServiceHolderActivity implements ClientCallbac
     private void initCardPager() {
         mBinding.cardRv.setHasFixedSize(true);
         mBinding.cardRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        mBinding.cardRv.setItemAnimator(new FadeInDownAnimator());
+        mBinding.cardRv.getItemAnimator().setAddDuration(100);
+
         mAdapter = new CardPagerAdapter(new ArrayList<>());
         mAdapter.setClientCallback(this);
         mBinding.cardRv.setAdapter(mAdapter);
@@ -71,8 +86,11 @@ public class CardActivity extends ServiceHolderActivity implements ClientCallbac
     }
 
     @Override
-    public void getCardCallback(String cardUrl) {
-        runOnUiThread(() -> mAdapter.addItem(new Card(cardUrl)));
+    public void addCardCallback(String cardUrl) {
+        runOnUiThread(() -> {
+            mAdapter.addItem(new Card(cardUrl));
+            mBinding.cardRv.scrollToPosition(0);
+        });
     }
 
     @Override
@@ -90,8 +108,44 @@ public class CardActivity extends ServiceHolderActivity implements ClientCallbac
     }
 
     @Override
-    public void onUserChooseEvent() {
-        message.postValue("choose card which you think is appropriate");
+    public void onMainStopRoundEvent() {
+        runOnUiThread(() ->
+                new AlertDialog.Builder(this, AlertDialog.THEME_DEVICE_DEFAULT_DARK)
+                        .setTitle(R.string.finish_round)
+                        .setMessage(R.string.finish_round)
+                        .setNeutralButton(R.string.OK,
+                                (dialog, which) -> serverMessage.postValue(Utils.CLIENT_COMMANDS.CLIENT_MAIN_STOP_FINISHED))
+                        .show());
+    }
+
+    private void initChooseDialog(int maxNum) {
+
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_number_picker, null);
+        final NumberPicker np = dialogView.findViewById(R.id.numberPicker);
+        np.setMaxValue(maxNum);
+        np.setMinValue(1);
+        np.setValue(1);
+        np.setWrapSelectorWheel(true);
+
+//        String[] array = new String[maxNum];
+//        for (int i = 0; i < maxNum; i++) {
+//            array[i] = Integer.toString(i + 1);
+//        }
+
+//        np.setDisplayedValues(array);
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.most_suitable_card)
+                .setView(dialogView)
+                .setCancelable(false)
+                .setNeutralButton(R.string.OK, (dialog, which) ->
+                        serverMessage.postValue(Utils.CLIENT_COMMANDS.CLIENT_USER_CHOOSE_FINISHED
+                                + Utils.DELIM
+                                + np.getValue())).show();
+    }
+
+    @Override
+    public void onUserChooseEvent(int playersNum) {
+        runOnUiThread(() -> initChooseDialog(playersNum));
     }
 
     @Override
@@ -104,13 +158,16 @@ public class CardActivity extends ServiceHolderActivity implements ClientCallbac
     @Override
     public void onUserFinishTurnEvent(String card) {
         serverMessage.postValue(Utils.CLIENT_COMMANDS.CLIENT_USER_FINISHED + Utils.DELIM + card);
-        runOnUiThread(() -> mBinding.title.setText(R.string.finish_turn));
-        itemTouchCallback.setSwipeEnabled(false);
+        runOnUiThread(() -> {
+            mBinding.title.setText(R.string.finish_turn);
+            itemTouchCallback.setSwipeEnabled(false);
+        });
+
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        ((Client) getService()).onDestroy();
+        getService().onDestroy();
     }
 }

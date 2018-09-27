@@ -126,15 +126,19 @@ public class Client extends BoundService {
             case Utils.CLIENT_COMMANDS.CLIENT_MAIN_TURN:
                 callback.onMainTurnEvent();
                 break;
+            case Utils.CLIENT_COMMANDS.CLIENT_MAIN_STOP:
+                callback.onMainStopRoundEvent();
+                break;
             case Utils.CLIENT_COMMANDS.CLIENT_USER_TURN:
                 callback.onUserTurnEvent();
                 break;
-            case Utils.CLIENT_COMMANDS.CLIENT_CHOOSE:
-                callback.onUserChooseEvent();
-                //пользователь получил новую карту
+            case Utils.CLIENT_COMMANDS.CLIENT_USER_CHOOSE:
+                int choice = Integer.valueOf(serverMsg.split(Utils.DELIM)[1]);
+                callback.onUserChooseEvent(choice);
+                break;
             case Utils.CLIENT_COMMANDS.CLIENT_GET:
                 String card = serverMsg.split(Utils.DELIM)[1];
-                callback.getCardCallback(card);
+                callback.addCardCallback(card);
                 break;
             case Utils.CLIENT_CONFIG.USERNAME_CHANGED:
                 username = serverMsg.split(Utils.DELIM)[1];

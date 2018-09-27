@@ -11,6 +11,7 @@ public class CardHandler implements Runnable {
     private PrintWriter outMessage;
     private Scanner inMessage;
     private String clientName;
+    private int currentChoice = -1;
 
     public CardHandler(Socket socket, Server server) {
         try {
@@ -48,7 +49,7 @@ public class CardHandler implements Runnable {
     private void acceptUserEvent() {
         String session = inMessage.nextLine();
         String username = inMessage.nextLine();
-        this.clientName = server.checkNames(username, 0);
+        this.clientName = server.getAvailableUsername(username, 0);
         if (!clientName.equals(username)) {
             sendMsg(Utils.CLIENT_CONFIG.USERNAME_CHANGED + Utils.DELIM + clientName);
         }
@@ -80,9 +81,14 @@ public class CardHandler implements Runnable {
                 break;
             case Utils.CLIENT_COMMANDS.CLIENT_USER_FINISHED:
                 card = clientMessage.split(Utils.DELIM)[1];
-                server.getCallbacks().onSelectedCardEvent(new Card(card, clientName));
-                server.getCallbacks().checkForAllCardsOnDesk();
+                server.getCallbacks().onUserTurnFinished(new Card(card, clientName));
                 break;
+            case Utils.CLIENT_COMMANDS.CLIENT_USER_CHOOSE_FINISHED:
+                currentChoice = Integer.valueOf(clientMessage.split(Utils.DELIM)[1]);
+                server.checkForAllUsersChoice();
+                break;
+            case Utils.CLIENT_COMMANDS.CLIENT_MAIN_STOP_FINISHED:
+                server.getCallbacks().uncoverCardsAnimation();
         }
     }
 
@@ -97,5 +103,9 @@ public class CardHandler implements Runnable {
 
     public String getName() {
         return clientName;
+    }
+
+    public int getChoice() {
+        return currentChoice;
     }
 }

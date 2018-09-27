@@ -30,14 +30,17 @@ public class MenuFragment extends Fragment {
 
     private void initListeners() {
         mBinding.search.setOnClickListener(mvmodel.getOnSearchClickListener(getActivity(), this));
-        mBinding.start.setOnClickListener(mvmodel.getOnStartClickListener(mBinding.switcher, mBinding.playerName));
+        mBinding.start.setOnClickListener(mvmodel.getOnStartClickListener(mBinding.switcher,
+                mBinding.playerName, mBinding.playerNum, mBinding.ptsNum));
         mBinding.switcher.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
                 mBinding.statusMsg.setText("Server, waiting for connections");
                 mBinding.search.setVisibility(View.GONE);
                 mBinding.playerName.setVisibility(View.GONE);
+                mBinding.screenContainer.setVisibility(View.VISIBLE);
                 mvmodel.discoverPeers();
             } else {
+                mBinding.screenContainer.setVisibility(View.GONE);
                 mBinding.search.setVisibility(View.VISIBLE);
                 mBinding.playerName.setVisibility(View.VISIBLE);
                 mBinding.statusMsg.setText(R.string.no_one_connected_to);

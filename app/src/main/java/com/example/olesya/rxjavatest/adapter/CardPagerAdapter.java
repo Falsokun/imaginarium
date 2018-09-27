@@ -53,7 +53,7 @@ public class CardPagerAdapter extends RecyclerView.Adapter<CardPagerAdapter.Hold
 
     public void addItem(Card card) {
         mDataSet.add(card);
-        notifyItemInserted(mDataSet.size() - 1);
+        notifyItemInserted(0);
     }
 
     public void setMainCaller(boolean mainCaller) {

@@ -5,103 +5,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <FrameLayout
-            android:id="@+id/container_players"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/std_mrgn"
-            android:layout_marginRight="@dimen/std_mrgn"
-            android:layout_marginTop="@dimen/std_mrgn">
-
-            <TextView
-                style="@style/TextViewStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/player_number" />
-
-            <TextView
-                style="@style/TextViewStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:hint="2" />
-        </FrameLayout>
-
-        <FrameLayout
-            android:id="@+id/container_mode"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/container_players"
-            android:layout_marginLeft="@dimen/std_mrgn"
-            android:layout_marginRight="@dimen/std_mrgn"
-            android:layout_marginTop="@dimen/std_mrgn">
-
-            <TextView
-                style="@style/TextViewStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/game_mode" />
-
-            <TextView
-                style="@style/TextViewStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:hint="v2" />
-        </FrameLayout>
-
-        <FrameLayout
-            android:id="@+id/container_time"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/container_mode"
-            android:layout_marginLeft="@dimen/std_mrgn"
-            android:layout_marginRight="@dimen/std_mrgn"
-            android:layout_marginTop="@dimen/std_mrgn">
-
-            <TextView
-                style="@style/TextViewStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/thinking_time" />
-
-            <TextView
-                style="@style/TextViewStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:hint="30s" />
-        </FrameLayout>
-
-        <FrameLayout
-            android:id="@+id/container_pts"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/container_time"
-            android:layout_marginLeft="@dimen/std_mrgn"
-            android:layout_marginRight="@dimen/std_mrgn"
-            android:layout_marginTop="@dimen/std_mrgn">
-
-            <TextView
-                style="@style/TextViewStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/pts_to_win" />
-
-            <TextView
-                style="@style/TextViewStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:hint="50" />
-        </FrameLayout>
-
         <Switch
             android:id="@+id/switcher"
             style="@style/TextViewStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/container_pts"
             android:layout_marginLeft="@dimen/std_mrgn"
             android:layout_marginRight="@dimen/std_mrgn"
             android:layout_marginTop="@dimen/std_mrgn"
@@ -115,6 +23,106 @@
             android:layout_below="@id/switcher"
             android:layout_margin="@dimen/std_mrgn"
             android:text="@string/no_one_connected_to" />
+
+        <RelativeLayout
+            android:id="@+id/screen_container"
+            android:layout_below="@id/status_msg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/std_mrgn"
+            android:layout_marginRight="@dimen/std_mrgn"
+            android:visibility="gone">
+
+            <FrameLayout
+                android:id="@+id/container_players"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/std_mrgn">
+
+                <TextView
+                    style="@style/TextViewStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/player_number" />
+
+                <EditText
+                    android:id="@+id/player_num"
+                    style="@style/TextViewStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:inputType="number"
+                    android:text="2" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/container_mode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/container_players">
+
+                <TextView
+                    style="@style/TextViewStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/game_mode" />
+
+                <EditText
+                    style="@style/TextViewStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:hint="v2" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/container_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/container_mode"
+                android:layout_marginTop="@dimen/std_mrgn">
+
+                <TextView
+                    style="@style/TextViewStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/thinking_time" />
+
+                <EditText
+                    style="@style/TextViewStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:hint="30s" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/container_pts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/container_time"
+                android:layout_marginTop="@dimen/std_mrgn">
+
+                <TextView
+                    style="@style/TextViewStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/pts_to_win" />
+
+                <EditText
+                    android:id="@+id/pts_num"
+                    style="@style/TextViewStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:inputType="number"
+                    android:text="100" />
+            </FrameLayout>
+        </RelativeLayout>
 
         <EditText
             android:id="@+id/player_name"

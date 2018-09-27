@@ -17,6 +17,7 @@ public class Utils {
     public static final String CLIENT_NUM = "CLIENT_NUM";
     public static final String ERR_UNKNOWN = "ERR_UNKNOWN";
     public static final java.lang.String DELIM = "#";
+    public static final String WIN_PTS = "WIN_PTS";
 
     public class GAME_MODE {
         public static final int UNDEFINED = -1;
@@ -33,15 +34,17 @@ public class Utils {
     }
 
     public class CLIENT_COMMANDS {
-        public static final String CLIENT_CHOOSE = "CLIENT_CHOOSE";
         public static final String CLIENT_GET = "CLIENT_GET";
         public static final String CLIENT_WAIT = "CLIENT_WAIT";
         public static final String GAME_START = "GAME_START";
-
-        public static final String CLIENT_MAIN_FINISHED = "CLIENT_MAIN_FINISHED";
+        public static final String CLIENT_MAIN_FINISHED = "CLIENT_MAIN_FIN";
         public static final String CLIENT_MAIN_TURN = "CLIENT_MAIN_TURN";
-        public static final String CLIENT_USER_FINISHED = "CLIENT_USER_FINISHED";
+        public static final String CLIENT_USER_FINISHED = "CLIENT_USER_FIN";
         public static final String CLIENT_USER_TURN = "CLIENT_USER_TURN";
+        public static final String CLIENT_MAIN_STOP = "CLIENT_MAIN_STOP";
+        public static final String CLIENT_MAIN_STOP_FINISHED = "CLIENT_MAIN_STOP_FINISHED";
+        public static final String CLIENT_USER_CHOOSE = "CLIENT_USER_CHOOSE";
+        public static final String CLIENT_USER_CHOOSE_FINISHED = "CLIENT_USER_CHOOSE_FINISHED";
     }
 
     public static boolean isWifiEnabled(@NonNull Context context) {
@@ -51,24 +54,11 @@ public class Utils {
         return wifi != null && wifi.isWifiEnabled();
     }
 
-    public static boolean isWifiConnected(@NonNull Context context) {
-        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        return mWifi.isConnected();
-    }
-
     public static void showAlert(@NonNull Context context, String str) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(str)
                 .setNeutralButton(R.string.OK, null)
                 .create()
                 .show();
-    }
-
-    public static int getScreenWidth(Activity activity) {
-        Display display = activity.getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        return size.x;
     }
 }

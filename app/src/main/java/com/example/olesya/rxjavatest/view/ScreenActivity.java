@@ -19,11 +19,14 @@ import com.example.olesya.rxjavatest.databinding.ActivityScreenImaginariumBindin
 
 import java.util.ArrayList;
 
+import jp.wasabeef.recyclerview.animators.FlipInTopXAnimator;
+
 public class ScreenActivity extends ServiceHolderActivity implements ServerCallback {
 
     private ActivityScreenImaginariumBinding mBinding;
     private ListAdapter playerAdapter;
     private CardPagerAdapter cardAdapter;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,7 +44,7 @@ public class ScreenActivity extends ServiceHolderActivity implements ServerCallb
 
     @Override
     public void setCallbacks() {
-        ((Server)mService).setCallbacks(this);
+        ((Server) mService).setCallbacks(this);
     }
 
     private void initListView() {
@@ -54,18 +57,22 @@ public class ScreenActivity extends ServiceHolderActivity implements ServerCallb
     }
 
     private void initCardPager() {
-        RecyclerView recyclerView = findViewById(R.id.card_rv);
+        recyclerView = findViewById(R.id.card_rv);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        recyclerView.setItemAnimator(new FlipInTopXAnimator());
+        recyclerView.getItemAnimator().setAddDuration(500);
         cardAdapter = new CardPagerAdapter(new ArrayList<>());
         recyclerView.setAdapter(cardAdapter);
-//        ItemTouchHelper touchHelper = new ItemTouchHelper(new ItemTouchCallback(mAdapter));
-//        touchHelper.attachToRecyclerView(recyclerView);
     }
 
     protected void startServerService() {
         mServiceIntent = new Intent(this, Server.class);
         mServiceIntent.putExtra(Utils.CLIENT_NUM, 5);
+        int playerNum = getIntent().getExtras().getInt(Utils.CLIENT_NUM);
+        int win = getIntent().getExtras().getInt(Utils.WIN_PTS);
+        mServiceIntent.putExtra(Utils.CLIENT_NUM, playerNum);
+        mServiceIntent.putExtra(Utils.WIN_PTS, win);
         startService(mServiceIntent);
     }
 
@@ -76,13 +83,25 @@ public class ScreenActivity extends ServiceHolderActivity implements ServerCallb
 
     @Override
     public void onSelectedCardEvent(Card card) {
-        runOnUiThread(() -> cardAdapter.addItem(card));
+        runOnUiThread(() -> {
+            cardAdapter.addItem(card);
+            recyclerView.scrollToPosition(cardAdapter.getItemCount() - 1);
+    });
+}
+
+    @Override
+    public void uncoverCardsAnimation() {
+        Utils.showAlert(this, "uncover");
     }
 
     @Override
-    public void checkForAllCardsOnDesk() {
-        if (cardAdapter.getItemCount() == playerAdapter.getItemCount()) {
-            ((Server) mService).chooseRound();
-        }
+    public void onUserTurnFinished(Card card) {
+        runOnUiThread(() -> {
+            cardAdapter.addItem(card);
+            recyclerView.scrollToPosition(cardAdapter.getItemCount() - 1);
+            if (cardAdapter.getItemCount() == playerAdapter.getItemCount()) {
+                ((Server) mService).startChoosingStep();
+            }
+        });
     }
 }
