@@ -20,6 +20,8 @@ import com.example.olesya.rxjavatest.Utils;
 import com.example.olesya.rxjavatest.databinding.ActivityScreenImaginariumBinding;
 import com.example.olesya.rxjavatest.interfaces.ScreenCallback;
 
+import java.util.ArrayList;
+
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
 public class ScreenActivity extends ServiceHolderActivity implements ScreenCallback {
@@ -119,11 +121,14 @@ public class ScreenActivity extends ServiceHolderActivity implements ScreenCallb
     @Override
     public void onStartNewRound() {
         ((Server) mService).changeLeader();
-        ((Server) mService).setTurnNextUser();
+        viewModel.startNewRound(mBinding.cardRv);
+
+        new Thread(() -> ((Server) mService).setTurnNextUser()).start();
     }
 
     @Override
     public void stopRound() {
+        ((Server)mService).sendCardsToUsers();
         runOnUiThread(() -> {
             viewModel.showChoices(mBinding.cardRv);
             ((Server) mService).countRoundPts(viewModel.getCardAdapter());
@@ -141,6 +146,13 @@ public class ScreenActivity extends ServiceHolderActivity implements ScreenCallb
         serviceMessage.postValue(clientName + " out");
         runOnUiThread(() -> viewModel.getPlayerAdapter().removePlayer(clientName));
         ((Server) mService).removePlayer(clientName);
+    }
+
+    @Override
+    public void initDesk(String username) {
+        for (int i = 0; i < Utils.DEFAULT_CARDS_NUM; i++) {
+            ((Server)mService).sendRandomCardToUser(username);
+        }
     }
 
     @Override

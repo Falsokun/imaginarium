@@ -11,4 +11,6 @@ public interface ScreenCallback {
     void onAddUserEvent(String clientName);
 
     void onRemoveUserEvent(String clientName);
+
+    void initDesk(String username);
 }

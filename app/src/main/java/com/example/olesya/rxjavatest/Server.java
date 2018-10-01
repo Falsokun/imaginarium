@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Server extends BoundService {
     private ServerSocket serverSocket;
@@ -25,6 +26,7 @@ public class Server extends BoundService {
     private int winPts = 100;
     private boolean isGameStopped = true;
     private int totalPlayerNum = 1;
+    private String randomCard;
 
     public Server() {
     }
@@ -281,6 +283,21 @@ public class Server extends BoundService {
     public void stopGame() {
         isGameStopped = true;
         sendMessageToAllClients(Utils.CLIENT_COMMANDS.GAME_STOP);
+    }
+
+    public void sendCardsToUsers() {
+        for (CardHandler cardHandler : clients) {
+            sendRandomCardToUser(cardHandler.getName());
+        }
+    }
+
+    public String getRandomCard() {
+        Random r = new Random();
+        return String.valueOf(r.nextInt(100));
+    }
+
+    public void sendRandomCardToUser(String username) {
+        sendCardToUser(username, getRandomCard());
     }
     //endregion
 }

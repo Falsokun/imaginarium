@@ -142,6 +142,10 @@ public class CardPagerAdapter extends RecyclerView.Adapter<CardPagerAdapter.Hold
         return mDataSet;
     }
 
+    public void clearData() {
+        mDataSet.clear();
+    }
+
     public static class Holder extends RecyclerView.ViewHolder implements View.OnLongClickListener, Animator.AnimatorListener {
         //        public ImageView img;
         public LayoutCardBinding mBinding;

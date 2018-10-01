@@ -28,7 +28,7 @@ public class CardHandler implements Runnable {
     public void run() {
         try {
             acceptUserEvent();
-            initDesk();
+            server.getScreenCallbacks().initDesk(clientName);
             while (true) {
                 if (inMessage.hasNext()) {
                     String clientMessage = inMessage.nextLine();
@@ -54,18 +54,6 @@ public class CardHandler implements Runnable {
         }
 
         server.getScreenCallbacks().onAddUserEvent(clientName);
-    }
-
-    private void initDesk() {
-        ArrayList<String> cards = new ArrayList<>();
-        cards.add("0");
-        cards.add("1");
-        cards.add("2");
-        cards.add("3");
-        cards.add("4");
-        for (String card : cards) {
-            server.sendCardToUser(clientName, card);
-        }
     }
 
     private void handleClientMessage(String clientMessage) {

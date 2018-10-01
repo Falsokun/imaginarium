@@ -16,6 +16,7 @@ public class Utils {
 
     public static final int NO_ONE_GUESSED_PTS = -2;
     public static final int GUESSED_PTS = 3;
+    public static int DEFAULT_CARDS_NUM = 5;
 
     public class GAME_MODE {
         public static final int UNDEFINED = -1;

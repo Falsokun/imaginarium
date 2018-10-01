@@ -74,5 +74,11 @@ public class ScreenViewModel extends ViewModel implements ItemCallback {
                 holder.uncoverItem();
         }
     }
+
+    public void startNewRound(RecyclerView cardRv) {
+        cardRv.removeAllViews();
+        cardAdapter.getVotes().clear();
+        cardAdapter.clearData();
+    }
     //endregion
 }
