@@ -51,12 +51,12 @@ public class Client extends BoundService {
             openConnection();
             sendMessage(Utils.CLIENT_CONFIG.ENTER_MSG);
             sendMessage(username);
-            handleEvent();
+            startHandlingEvents();
         }).start();
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private void handleEvent() {
+    public void startHandlingEvents() {
         if (!socketCl.isConnected()) {
             return;
         }

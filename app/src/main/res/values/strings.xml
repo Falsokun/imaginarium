@@ -27,4 +27,6 @@
     <string name="most_suitable_card">Create card which is the most suitable to the topic</string>
     <string name="finish_round">Finish round</string>
     <string name="err_persons_num">invalid persons num</string>
+    <string name="end_of_game">Конец игры</string>
+    <string name="round_results">round results</string>
 </resources>

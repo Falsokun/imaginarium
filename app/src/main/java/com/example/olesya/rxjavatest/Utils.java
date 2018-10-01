@@ -1,14 +1,9 @@
 package com.example.olesya.rxjavatest;
 
-import android.app.Activity;
 import android.content.Context;
-import android.graphics.Point;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
-import android.view.Display;
 
 public class Utils {
     public static final int PERMISSIONS_REQUEST_CODE_ACCESS_COARSE_LOCATION = 1001;
@@ -18,6 +13,9 @@ public class Utils {
     public static final String ERR_UNKNOWN = "ERR_UNKNOWN";
     public static final java.lang.String DELIM = "#";
     public static final String WIN_PTS = "WIN_PTS";
+
+    public static final int NO_ONE_GUESSED_PTS = -2;
+    public static final int GUESSED_PTS = 3;
 
     public class GAME_MODE {
         public static final int UNDEFINED = -1;

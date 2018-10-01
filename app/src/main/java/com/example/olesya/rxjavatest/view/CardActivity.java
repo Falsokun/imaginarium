@@ -1,14 +1,12 @@
 package com.example.olesya.rxjavatest.view;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Range;
 import android.view.View;
 import android.widget.NumberPicker;
 
@@ -24,13 +22,8 @@ import com.example.olesya.rxjavatest.interfaces.ClientCallback;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
-import github.hellocsl.layoutmanager.gallery.GalleryLayoutManager;
 import jp.wasabeef.recyclerview.animators.FadeInDownAnimator;
-import jp.wasabeef.recyclerview.animators.SlideInDownAnimator;
 
 public class CardActivity extends ServiceHolderActivity implements ClientCallback {
 
@@ -60,6 +53,7 @@ public class CardActivity extends ServiceHolderActivity implements ClientCallbac
     @Override
     public void setCallbacks() {
         ((Client) mService).setCallbacks(this);
+//        ((Client) mService).startHandlingEvents();
     }
 
     protected void startClientService(InetAddress screenAddress, String username) {
@@ -119,20 +113,12 @@ public class CardActivity extends ServiceHolderActivity implements ClientCallbac
     }
 
     private void initChooseDialog(int maxNum) {
-
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_number_picker, null);
         final NumberPicker np = dialogView.findViewById(R.id.numberPicker);
         np.setMaxValue(maxNum);
         np.setMinValue(1);
         np.setValue(1);
         np.setWrapSelectorWheel(true);
-
-//        String[] array = new String[maxNum];
-//        for (int i = 0; i < maxNum; i++) {
-//            array[i] = Integer.toString(i + 1);
-//        }
-
-//        np.setDisplayedValues(array);
         new AlertDialog.Builder(this)
                 .setTitle(R.string.most_suitable_card)
                 .setView(dialogView)

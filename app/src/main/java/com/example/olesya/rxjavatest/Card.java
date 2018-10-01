@@ -1,10 +1,12 @@
 package com.example.olesya.rxjavatest;
 
+import java.util.ArrayList;
+
 public class Card {
 
     private String img;
     private String playerName;
-    private int votes = 0;
+    private ArrayList<Integer> votes = new ArrayList<>();
 
     public Card(String img) {
         this.img = img;
@@ -31,11 +33,11 @@ public class Card {
         this.playerName = playerName;
     }
 
-    public int getVotes() {
-        return votes;
+    public void addVote(int vote) {
+        votes.add(vote);
     }
 
-    public void setVotes(int votes) {
-        this.votes = votes;
+    public ArrayList<Integer> getVotes() {
+        return votes;
     }
 }

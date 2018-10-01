@@ -8,7 +8,13 @@ public interface ServerCallback {
 
     void onSelectedCardEvent(Card username);
 
-    void uncoverCardsAnimation();
+    void stopRound();
 
     void onUserTurnFinished(Card card);
+
+    void onShuffleEnd();
+
+    void onAddUserChoice(String clientName, int currentChoice);
+
+    void onStartNewRound();
 }

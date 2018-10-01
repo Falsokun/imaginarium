@@ -12,6 +12,7 @@ public class CardHandler implements Runnable {
     private Scanner inMessage;
     private String clientName;
     private int currentChoice = -1;
+    private int totalPts = 0;
 
     public CardHandler(Socket socket, Server server) {
         try {
@@ -84,11 +85,12 @@ public class CardHandler implements Runnable {
                 server.getCallbacks().onUserTurnFinished(new Card(card, clientName));
                 break;
             case Utils.CLIENT_COMMANDS.CLIENT_USER_CHOOSE_FINISHED:
-                currentChoice = Integer.valueOf(clientMessage.split(Utils.DELIM)[1]);
+                currentChoice = Integer.valueOf(clientMessage.split(Utils.DELIM)[1]) - 1;
+                server.getCallbacks().onAddUserChoice(clientName, currentChoice);
                 server.checkForAllUsersChoice();
                 break;
             case Utils.CLIENT_COMMANDS.CLIENT_MAIN_STOP_FINISHED:
-                server.getCallbacks().uncoverCardsAnimation();
+                server.getCallbacks().stopRound();
         }
     }
 
@@ -101,11 +103,23 @@ public class CardHandler implements Runnable {
         }
     }
 
+    public void addPts(int pts) {
+        totalPts += pts;
+    }
+
     public String getName() {
         return clientName;
     }
 
     public int getChoice() {
         return currentChoice;
+    }
+
+    public int getPts() {
+        return totalPts;
+    }
+
+    public void resetChoice() {
+        currentChoice = -1;
     }
 }
