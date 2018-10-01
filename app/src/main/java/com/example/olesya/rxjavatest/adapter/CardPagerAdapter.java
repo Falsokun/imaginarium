@@ -6,10 +6,9 @@ import android.animation.AnimatorSet;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.RippleDrawable;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -17,14 +16,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.olesya.rxjavatest.Card;
 import com.example.olesya.rxjavatest.R;
 import com.example.olesya.rxjavatest.databinding.LayoutCardBinding;
 import com.example.olesya.rxjavatest.interfaces.ClientCallback;
-import com.example.olesya.rxjavatest.interfaces.ServerCallback;
+import com.example.olesya.rxjavatest.interfaces.ItemCallback;
+import com.example.olesya.rxjavatest.interfaces.ScreenCallback;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -33,7 +32,7 @@ public class CardPagerAdapter extends RecyclerView.Adapter<CardPagerAdapter.Hold
     private ArrayList<Card> mDataSet;
     private ArrayList<ArrayList<String>> votesData = new ArrayList<>();
     private ClientCallback clientCallback;
-    private ServerCallback serverCallback;
+    private ScreenCallback itemCallback;
     private boolean isMainCaller;
 
     public CardPagerAdapter(ArrayList<Card> dataset) {
@@ -73,10 +72,16 @@ public class CardPagerAdapter extends RecyclerView.Adapter<CardPagerAdapter.Hold
         }
     }
 
-    public void addItem(Card card) {
-        mDataSet.add(0, card);
+    public void insert(int position, Card card) {
+        mDataSet.add(position, card);
         votesData.add(new ArrayList<>());
         notifyItemInserted(0);
+    }
+
+    public void add(Card card) {
+        mDataSet.add(card);
+        votesData.add(new ArrayList<>());
+        notifyItemInserted(mDataSet.size() - 1);
     }
 
     public void addVote(int cardNum, String playerName) {
@@ -91,14 +96,14 @@ public class CardPagerAdapter extends RecyclerView.Adapter<CardPagerAdapter.Hold
     }
 
     public void shuffleCards() {
-        Handler handler = new Handler();
         ArrayList<Card> set = new ArrayList<>();
         Random r = new Random();
+        Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 if (set == mDataSet) {
-                    serverCallback.onShuffleEnd();
+                    itemCallback.onShuffleEnd();
                     return;
                 }
 
@@ -111,7 +116,7 @@ public class CardPagerAdapter extends RecyclerView.Adapter<CardPagerAdapter.Hold
                     notifyItemRangeInserted(1, mDataSet.size());
                 }
 
-                handler.postDelayed(this, set != mDataSet ? 500 : 1500);
+                handler.postDelayed(this, 500);
             }
         }, 0);
     }
@@ -227,9 +232,6 @@ public class CardPagerAdapter extends RecyclerView.Adapter<CardPagerAdapter.Hold
             bt.setHeight(dpToPx(context, 50));
             bt.setBackground(getRadialGradient(Color.parseColor("#000000"),
                     Color.parseColor("#ffffff")));
-//            RippleDrawable gradientDrawable = (RippleDrawable) bt.getBackground();
-//            int colors[] = { context.getResources().getColor(R.color.colorPrimaryDark), context.getResources().getColor(R.color.colorAccent) };
-//            gradientDrawable.set(colors);
             mBinding.votesContainer.addView(bt);
         }
 
@@ -260,7 +262,7 @@ public class CardPagerAdapter extends RecyclerView.Adapter<CardPagerAdapter.Hold
         clientCallback = callback;
     }
 
-    public void setServerCallback(ServerCallback callback) {
-        serverCallback = callback;
+    public void setItemCallback(ScreenCallback callback) {
+        itemCallback = callback;
     }
 }

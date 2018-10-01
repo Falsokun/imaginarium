@@ -20,7 +20,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.Holder> {
 
     @Override
     public ListAdapter.Holder onCreateViewHolder(ViewGroup parent,
-                                                      int viewType) {
+                                                 int viewType) {
         FrameLayout v = (FrameLayout) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.layout_list, parent, false);
         ListAdapter.Holder vh = new ListAdapter.Holder(v);
@@ -39,7 +39,24 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.Holder> {
 
     public void add(String username) {
         mDataSet.add(username);
-        notifyItemRangeChanged(mDataSet.size()-1,1);
+        notifyItemRangeChanged(mDataSet.size() - 1, 1);
+    }
+
+    public void removePlayer(String name) {
+        int index = findIndex(name);
+        if (index != -1) {
+            mDataSet.remove(name);
+            notifyItemRemoved(index);
+        }
+    }
+
+    private int findIndex(String name) {
+        for (int i = 0; i < mDataSet.size(); i++) {
+            if (mDataSet.get(i).equals(name))
+                return i;
+        }
+
+        return -1;
     }
 
     public static class Holder extends RecyclerView.ViewHolder {

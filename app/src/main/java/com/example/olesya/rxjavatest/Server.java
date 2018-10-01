@@ -1,14 +1,13 @@
 package com.example.olesya.rxjavatest;
 
-import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
 import com.example.olesya.rxjavatest.ClassModels.BoundService;
 import com.example.olesya.rxjavatest.adapter.CardPagerAdapter;
-import com.example.olesya.rxjavatest.interfaces.ServerCallback;
+import com.example.olesya.rxjavatest.interfaces.ItemCallback;
+import com.example.olesya.rxjavatest.interfaces.ScreenCallback;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -16,14 +15,16 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 public class Server extends BoundService {
-
     private ServerSocket serverSocket;
     private Socket clientSocket;
     private ArrayList<CardHandler> clients = new ArrayList<>();
-    private ServerCallback serverCallbacks;
+    private ItemCallback itemCallbacks;
+    private ScreenCallback screenCallbacks;
     private int currentPosition = 0;
     ArrayList<Integer> order;
     private int winPts = 100;
+    private boolean isGameStopped = true;
+    private int totalPlayerNum = 1;
 
     public Server() {
     }
@@ -39,13 +40,14 @@ public class Server extends BoundService {
         try {
             serverSocket = new ServerSocket(PORT_NUMBER);
             if (intent.getExtras() != null) {
-                int playerNum = intent.getExtras().getInt(Utils.CLIENT_NUM);
+                totalPlayerNum = intent.getExtras().getInt(Utils.CLIENT_NUM);
                 winPts = intent.getExtras().getInt(Utils.WIN_PTS);
                 new Thread(() -> {
-                    for (int i = 0; i < playerNum; i++) {
+                    for (int i = 0; i < totalPlayerNum; i++) {
                         openConnection();
                     }
 
+                    isGameStopped = clients.size() == totalPlayerNum;
                     sendMessageToAllClients(Utils.CLIENT_COMMANDS.GAME_START);
                     choosePlayerOrder();
                     setTurnNextUser();
@@ -59,6 +61,9 @@ public class Server extends BoundService {
     }
 
     public void setTurnNextUser() {
+        if (clients == null || clients.size() <= currentPosition)
+            return;
+
         CardHandler client = clients.get(currentPosition);
         client.sendMsg(Utils.CLIENT_COMMANDS.CLIENT_MAIN_TURN);
     }
@@ -78,7 +83,7 @@ public class Server extends BoundService {
             clients.add(client);
             new Thread(client).start();
         } catch (IOException e) {
-            message.postValue(e.getMessage());
+            serviceMessage.postValue(e.getMessage());
         }
     }
 
@@ -92,7 +97,7 @@ public class Server extends BoundService {
     public void sendCardToUser(String user, String card) {
         CardHandler ch = findUser(user);
         if (ch == null) {
-            message.postValue("No user named " + user + "found");
+            serviceMessage.postValue("No user named " + user + "found");
             return;
         }
 
@@ -111,12 +116,16 @@ public class Server extends BoundService {
         return null;
     }
 
-    public void setCallbacks(ServerCallback callbacks) {
-        serverCallbacks = callbacks;
+    public void setCallbacks(ItemCallback callbacks) {
+        itemCallbacks = callbacks;
     }
 
-    public ServerCallback getCallbacks() {
-        return serverCallbacks;
+    public void setScreenCallbacks(ScreenCallback callbacks) {
+        screenCallbacks = callbacks;
+    }
+
+    public ItemCallback getCallbacks() {
+        return itemCallbacks;
     }
 
     public void allowUsersToChoose(String clientName) {
@@ -173,6 +182,23 @@ public class Server extends BoundService {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (serverSocket != null && !serverSocket.isClosed()) {
+            for (CardHandler client : clients) {
+                client.sendMsg(Utils.CLIENT_CONFIG.END_MSG);
+            }
+
+            try {
+                serverSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //пока не расписано, что все отгадали
     public void countRoundPts(CardPagerAdapter cardAdapter) {
         String mainUserName = getCurrentMainUser().getName();
         for (int i = 0; i < cardAdapter.getData().size(); i++) {
@@ -191,28 +217,6 @@ public class Server extends BoundService {
         }
     }
 
-    //TODO: лучше это будет окно со списком, по нажатию на окей начинается новый раунд
-    public void showResults(Context context) {
-        String str = "";
-        for (CardHandler client : clients) {
-            str += client.getName() + ": " + client.getPts() + "\n";
-        }
-
-        for (CardHandler client : clients) {
-            if (client.getPts() == winPts) {
-                Utils.showAlert(context, context.getResources().getString(R.string.end_of_game));
-                return; // выйти из активности назад
-            }
-        }
-
-        new AlertDialog.Builder(context, AlertDialog.THEME_DEVICE_DEFAULT_DARK)
-                .setTitle(R.string.round_results)
-                .setMessage(str)
-                .setCancelable(false)
-                .setNeutralButton(R.string.OK,
-                        (dialog, which) -> serverCallbacks.onStartNewRound())
-                .show();
-    }
 
     private void addToUsersPts(ArrayList<String> players) {
         for (String player : players) {
@@ -239,5 +243,44 @@ public class Server extends BoundService {
         }
     }
 
+    public boolean hasClientWinPts() {
+        for (CardHandler client : clients) {
+            if (client.getPts() >= winPts) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public String getStringResults() {
+        StringBuilder str = new StringBuilder();
+        String delim = ": ";
+        for (CardHandler client : clients) {
+            str.append(client.getName());
+            str.append(delim);
+            str.append(client.getPts());
+            str.append("\n");
+        }
+
+        return str.toString();
+    }
+
+    public ScreenCallback getScreenCallbacks() {
+        return screenCallbacks;
+    }
+
+    public void removePlayer(String clientName) {
+        clients.remove(findPlayerByName(clientName));
+//        if (clients.size() < totalPlayerNum) {
+//            openConnection();
+//            isGameStopped = clients.size() == totalPlayerNum;
+//        }
+    }
+
+    public void stopGame() {
+        isGameStopped = true;
+        sendMessageToAllClients(Utils.CLIENT_COMMANDS.GAME_STOP);
+    }
     //endregion
 }

@@ -32,11 +32,10 @@ public class CardHandler implements Runnable {
             while (true) {
                 if (inMessage.hasNext()) {
                     String clientMessage = inMessage.nextLine();
+                    handleClientMessage(clientMessage);
                     if (clientMessage.equalsIgnoreCase(Utils.CLIENT_CONFIG.END_MSG)) {
                         break;
                     }
-
-                    handleClientMessage(clientMessage);
                 }
                 Thread.sleep(100);
             }
@@ -48,14 +47,13 @@ public class CardHandler implements Runnable {
     }
 
     private void acceptUserEvent() {
-        String session = inMessage.nextLine();
         String username = inMessage.nextLine();
         this.clientName = server.getAvailableUsername(username, 0);
         if (!clientName.equals(username)) {
             sendMsg(Utils.CLIENT_CONFIG.USERNAME_CHANGED + Utils.DELIM + clientName);
         }
 
-        server.getCallbacks().onAddUserEvent(clientName);
+        server.getScreenCallbacks().onAddUserEvent(clientName);
     }
 
     private void initDesk() {
@@ -90,7 +88,10 @@ public class CardHandler implements Runnable {
                 server.checkForAllUsersChoice();
                 break;
             case Utils.CLIENT_COMMANDS.CLIENT_MAIN_STOP_FINISHED:
-                server.getCallbacks().stopRound();
+                server.getScreenCallbacks().stopRound();
+                break;
+            case Utils.CLIENT_CONFIG.END_MSG:
+                server.getScreenCallbacks().onRemoveUserEvent(clientName);
         }
     }
 

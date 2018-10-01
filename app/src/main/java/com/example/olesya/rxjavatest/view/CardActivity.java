@@ -53,7 +53,7 @@ public class CardActivity extends ServiceHolderActivity implements ClientCallbac
     @Override
     public void setCallbacks() {
         ((Client) mService).setCallbacks(this);
-//        ((Client) mService).startHandlingEvents();
+        ((Client)mService).start();
     }
 
     protected void startClientService(InetAddress screenAddress, String username) {
@@ -82,7 +82,7 @@ public class CardActivity extends ServiceHolderActivity implements ClientCallbac
     @Override
     public void addCardCallback(String cardUrl) {
         runOnUiThread(() -> {
-            mAdapter.addItem(new Card(cardUrl));
+            mAdapter.insert(0, new Card(cardUrl));
             mBinding.cardRv.scrollToPosition(0);
         });
     }
@@ -148,12 +148,11 @@ public class CardActivity extends ServiceHolderActivity implements ClientCallbac
             mBinding.title.setText(R.string.finish_turn);
             itemTouchCallback.setSwipeEnabled(false);
         });
-
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        getService().onDestroy();
+        stopService(mServiceIntent);
     }
 }

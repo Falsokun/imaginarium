@@ -1,68 +1,68 @@
 package com.example.olesya.rxjavatest.view;
 
+import android.app.AlertDialog;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.math.MathUtils;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
 import com.example.olesya.rxjavatest.Card;
-import com.example.olesya.rxjavatest.CardHandler;
-import com.example.olesya.rxjavatest.R;
-import com.example.olesya.rxjavatest.Server;
-import com.example.olesya.rxjavatest.adapter.CardPagerAdapter;
-import com.example.olesya.rxjavatest.interfaces.ServerCallback;
 import com.example.olesya.rxjavatest.ClassModels.ServiceHolderActivity;
+import com.example.olesya.rxjavatest.R;
+import com.example.olesya.rxjavatest.ScreenViewModel;
+import com.example.olesya.rxjavatest.Server;
 import com.example.olesya.rxjavatest.Utils;
-import com.example.olesya.rxjavatest.adapter.ListAdapter;
 import com.example.olesya.rxjavatest.databinding.ActivityScreenImaginariumBinding;
-
-import java.util.ArrayList;
+import com.example.olesya.rxjavatest.interfaces.ScreenCallback;
 
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 
-public class ScreenActivity extends ServiceHolderActivity implements ServerCallback {
+public class ScreenActivity extends ServiceHolderActivity implements ScreenCallback {
 
     private ActivityScreenImaginariumBinding mBinding;
-    private ListAdapter playerAdapter;
-    private CardPagerAdapter cardAdapter;
+    private ScreenViewModel viewModel;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_screen_imaginarium);
+        viewModel = ViewModelProviders.of(this).get(ScreenViewModel.class);
         initListView();
         initCardPager();
         startServerService();
-        mBinding.buttonSend.setOnClickListener(v -> {
-        });
+        viewModel.getMessage().observe(this, s -> Utils.showAlert(ScreenActivity.this, s));
+        mBinding.buttonSend.setOnClickListener(v -> serviceMessage.postValue("anything"));
+//        test();
     }
 
-    private void showChoices() {
-        for (int i = 0; i < cardAdapter.getItemCount(); i++) {
-            CardPagerAdapter.Holder holder = (CardPagerAdapter.Holder) mBinding.cardRv.findViewHolderForAdapterPosition(i);
-            holder.addChips(cardAdapter.getVotesByNum(i));
-        }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopService(mServiceIntent);
     }
 
     private void test() {
-        cardAdapter.addItem(new Card("0", "player"));
-        cardAdapter.addItem(new Card("1", "player0"));
-        cardAdapter.addItem(new Card("2", "player1"));
+        viewModel.onSelectedCardEvent(new Card("0", "player"));
+        viewModel.onSelectedCardEvent(new Card("1", "player1"));
+        viewModel.onSelectedCardEvent(new Card("2", "player2"));
+        viewModel.onSelectedCardEvent(new Card("3", "player3"));
     }
 
     @Override
     public void setCallbacks() {
-        ((Server) mService).setCallbacks(this);
+        ((Server) mService).setCallbacks(viewModel);
+        ((Server) mService).setScreenCallbacks(this);
     }
 
     private void initListView() {
         //init player rv
-        ArrayList<String> str = new ArrayList<>();
-        playerAdapter = new ListAdapter(str);
         mBinding.playersStatusRv.setHasFixedSize(false);
-        mBinding.playersStatusRv.setAdapter(playerAdapter);
+        mBinding.playersStatusRv.setAdapter(viewModel.getPlayerAdapter());
         mBinding.playersStatusRv.setLayoutManager(new LinearLayoutManager(this));
     }
 
@@ -71,60 +71,49 @@ public class ScreenActivity extends ServiceHolderActivity implements ServerCallb
         mBinding.cardRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         mBinding.cardRv.setItemAnimator(new SlideInUpAnimator());
         mBinding.cardRv.getItemAnimator().setAddDuration(200);
-        cardAdapter = new CardPagerAdapter(new ArrayList<>());
-        cardAdapter.setServerCallback(this);
-        mBinding.cardRv.setAdapter(cardAdapter);
+        mBinding.cardRv.setAdapter(viewModel.getCardAdapter());
+        viewModel.getCardAdapter().setItemCallback(this);
+        viewModel.getCardAdapter().registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                super.onItemRangeInserted(positionStart, itemCount);
+                runOnUiThread(() -> mBinding.cardRv.scrollToPosition(positionStart));
+            }
+
+            @Override
+            public void onItemRangeRemoved(int positionStart, int itemCount) {
+                super.onItemRangeRemoved(positionStart, itemCount);
+            }
+        });
     }
 
     protected void startServerService() {
-//        test();
         mServiceIntent = new Intent(this, Server.class);
-        mServiceIntent.putExtra(Utils.CLIENT_NUM, 5);
-        int playerNum = getIntent().getExtras().getInt(Utils.CLIENT_NUM);
-        int win = getIntent().getExtras().getInt(Utils.WIN_PTS);
-        mServiceIntent.putExtra(Utils.CLIENT_NUM, playerNum);
-        mServiceIntent.putExtra(Utils.WIN_PTS, win);
+        if (getIntent().getExtras() != null) {
+            int playerNum = getIntent().getExtras().getInt(Utils.CLIENT_NUM);
+            int win = getIntent().getExtras().getInt(Utils.WIN_PTS);
+            mServiceIntent.putExtra(Utils.CLIENT_NUM, playerNum);
+            mServiceIntent.putExtra(Utils.WIN_PTS, win);
+        }
+
         startService(mServiceIntent);
     }
 
-    @Override
-    public void onAddUserEvent(String username) {
-        runOnUiThread(() -> playerAdapter.add(username));
-    }
+    private void showRoundResults() {
+        if (((Server) mService).hasClientWinPts()) {
+            Utils.showAlert(this, getResources().getString(R.string.end_of_game));
+            ((Server) mService).stopGame();
+            return;
+        }
 
-    @Override
-    public void onSelectedCardEvent(Card card) {
-        runOnUiThread(() -> {
-            cardAdapter.addItem(card);
-            mBinding.cardRv.scrollToPosition(cardAdapter.getItemCount() - 1);
-        });
-    }
-
-    @Override
-    public void stopRound() {
-        runOnUiThread(() -> {
-            showChoices();
-            ((Server) mService).countRoundPts(cardAdapter);
-            ((Server) mService).showResults(this);
-        });
-    }
-
-    @Override
-    public void onShuffleEnd() {
-        runOnUiThread(() -> {
-            for (int i = 0; i < cardAdapter.getItemCount(); ++i) {
-                CardPagerAdapter.Holder holder = (CardPagerAdapter.Holder) mBinding.cardRv.findViewHolderForAdapterPosition(i);
-                if (holder != null)
-                    holder.uncoverItem();
-            }
-
-            ((Server) getService()).startChoosingStep();
-        });
-    }
-
-    @Override
-    public void onAddUserChoice(String clientName, int currentChoice) {
-        cardAdapter.addVote(currentChoice, clientName);
+        String results = ((Server) mService).getStringResults();
+        new AlertDialog.Builder(this, AlertDialog.THEME_DEVICE_DEFAULT_DARK)
+                .setTitle(R.string.round_results)
+                .setMessage(results)
+                .setCancelable(false)
+                .setNeutralButton(R.string.OK,
+                        (dialog, which) -> onStartNewRound())
+                .show();
     }
 
     @Override
@@ -134,13 +123,31 @@ public class ScreenActivity extends ServiceHolderActivity implements ServerCallb
     }
 
     @Override
-    public void onUserTurnFinished(Card card) {
+    public void stopRound() {
         runOnUiThread(() -> {
-            cardAdapter.addItem(card);
-            mBinding.cardRv.scrollToPosition(cardAdapter.getItemCount() - 1);
-            if (cardAdapter.getItemCount() == playerAdapter.getItemCount()) {
-                cardAdapter.shuffleCards();
-            }
+            viewModel.showChoices(mBinding.cardRv);
+            ((Server) mService).countRoundPts(viewModel.getCardAdapter());
+            showRoundResults();
+        });
+    }
+
+    @Override
+    public void onAddUserEvent(String clientName) {
+        runOnUiThread(() -> viewModel.getPlayerAdapter().add(clientName));
+    }
+
+    @Override
+    public void onRemoveUserEvent(String clientName) {
+        serviceMessage.postValue(clientName + " out");
+        runOnUiThread(() -> viewModel.getPlayerAdapter().removePlayer(clientName));
+        ((Server) mService).removePlayer(clientName);
+    }
+
+    @Override
+    public void onShuffleEnd() {
+        runOnUiThread(() -> {
+            viewModel.unCoverItems(mBinding.cardRv);
+            ((Server) getService()).startChoosingStep();
         });
     }
 }

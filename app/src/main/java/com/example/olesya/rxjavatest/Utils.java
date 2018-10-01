@@ -43,6 +43,7 @@ public class Utils {
         public static final String CLIENT_MAIN_STOP_FINISHED = "CLIENT_MAIN_STOP_FINISHED";
         public static final String CLIENT_USER_CHOOSE = "CLIENT_USER_CHOOSE";
         public static final String CLIENT_USER_CHOOSE_FINISHED = "CLIENT_USER_CHOOSE_FINISHED";
+        public static final String GAME_STOP = "GAME_STOP";
     }
 
     public static boolean isWifiEnabled(@NonNull Context context) {

@@ -27,6 +27,8 @@
     <string name="most_suitable_card">Create card which is the most suitable to the topic</string>
     <string name="finish_round">Finish round</string>
     <string name="err_persons_num">invalid persons num</string>
-    <string name="end_of_game">Конец игры</string>
+    <string name="end_of_game">End of game</string>
     <string name="round_results">round results</string>
+    <string name="err_no_p2p_conn">No connection to p2p server</string>
+    <string name="lost_server">Lost server</string>
 </resources>

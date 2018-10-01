@@ -19,12 +19,12 @@ import java.util.Scanner;
 public class Client extends BoundService {
 
     private Socket socketCl;
-    String host;
+    private String host;
     private PrintWriter serverStream;
     private Scanner inMessage;
-    private String clientState = Utils.CLIENT_COMMANDS.CLIENT_WAIT;
     private String username;
     private ClientCallback callback;
+    private Intent intent;
 
     public Client() {
     }
@@ -35,25 +35,41 @@ public class Client extends BoundService {
         return binder;
     }
 
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        this.intent = intent;
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    public void start() {
         new Thread(() -> {
-            if (intent == null || intent.getExtras() == null
-                    || intent.getExtras().getSerializable(Utils.CLIENT_CONFIG.HOST_CONFIG) == null) {
-                message.postValue(Utils.ERR_UNKNOWN);
-                //вообще тут бы выходить, но сервис вроде итак работу закончит??
+            if (!checkConnectionConfig(intent)) {
+                Toast.makeText(this, "что-то с intent", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            host = ((InetAddress) intent.getExtras().getSerializable(Utils.CLIENT_CONFIG.HOST_CONFIG)).getHostName();
-            username = intent.getExtras().getString(Utils.CLIENT_CONFIG.USERNAME);
             openConnection();
-            sendMessage(Utils.CLIENT_CONFIG.ENTER_MSG);
             sendMessage(username);
             startHandlingEvents();
         }).start();
-        return super.onStartCommand(intent, flags, startId);
+    }
+
+    public boolean checkConnectionConfig(Intent intent) {
+        InetAddress inetAddress;
+        if (intent == null || intent.getExtras() == null
+                || intent.getExtras().getSerializable(Utils.CLIENT_CONFIG.HOST_CONFIG) == null) {
+            serviceMessage.postValue(getResources().getString(R.string.err_no_p2p_conn));
+            return false;
+        }
+
+        inetAddress = (InetAddress) intent.getExtras().getSerializable(Utils.CLIENT_CONFIG.HOST_CONFIG);
+        if (inetAddress == null) {
+            return false;
+        }
+
+        host = inetAddress.getHostName();
+        username = intent.getExtras().getString(Utils.CLIENT_CONFIG.USERNAME);
+        return true;
     }
 
     public void startHandlingEvents() {
@@ -67,6 +83,7 @@ public class Client extends BoundService {
                 // если сервер отправляет данное сообщение, то цикл прерывается и
                 // клиент выходит из чата
                 if (serverMsg.equalsIgnoreCase(Utils.CLIENT_CONFIG.END_MSG)) {
+                    serviceMessage.postValue(getResources().getString(R.string.lost_server));
                     break;
                 }
 
@@ -96,9 +113,9 @@ public class Client extends BoundService {
             this.serverStream = new PrintWriter(socketCl.getOutputStream(), true);
             this.inMessage = new Scanner(socketCl.getInputStream());
         } catch (ConnectException ex) {
-            message.postValue("no screen found, wait until screen starts it work and retry");
+            serviceMessage.postValue("no screen found, wait until screen starts it work and retry");
         } catch (IOException ex) {
-            message.postValue(ex.toString());
+            serviceMessage.postValue(ex.toString());
             Toast.makeText(this, "io exception", Toast.LENGTH_SHORT).show();
         }
     }
@@ -149,10 +166,19 @@ public class Client extends BoundService {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        try {
-            socketCl.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (socketCl != null) {
+            stopWithMessage(Utils.CLIENT_CONFIG.END_MSG);
         }
+    }
+
+    private void stopWithMessage(String endMsg) {
+        new Thread(() -> {
+            try {
+                sendMessage(endMsg);
+                socketCl.close();
+            } catch (IOException e) {
+                serviceMessage.postValue(e.toString());
+            }
+        }).start();
     }
 }
