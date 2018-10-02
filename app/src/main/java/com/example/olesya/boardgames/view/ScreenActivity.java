@@ -35,7 +35,6 @@ public class ScreenActivity extends ServiceHolderActivity implements ScreenCallb
         startServerService();
         viewModel.getMessage().observe(this, s -> Utils.showAlert(ScreenActivity.this, s));
         mBinding.buttonSend.setOnClickListener(v -> serviceMessage.postValue("anything"));
-//        test();
     }
 
     @Override
@@ -45,16 +44,19 @@ public class ScreenActivity extends ServiceHolderActivity implements ScreenCallb
     }
 
     private void test() {
-        viewModel.onSelectedCardEvent(new Card("0", "player"));
-        viewModel.onSelectedCardEvent(new Card("1", "player1"));
-        viewModel.onSelectedCardEvent(new Card("2", "player2"));
-        viewModel.onSelectedCardEvent(new Card("3", "player3"));
+        new Thread(() -> {
+            viewModel.onSelectedCardEvent(((Server) mService).getRandomCard());
+            viewModel.onSelectedCardEvent(((Server) mService).getRandomCard());
+            viewModel.onSelectedCardEvent(((Server) mService).getRandomCard());
+            viewModel.onSelectedCardEvent(((Server) mService).getRandomCard());
+        }).start();
     }
 
     @Override
     public void setCallbacks() {
         ((Server) mService).setCallbacks(viewModel);
         ((Server) mService).setScreenCallbacks(this);
+//        test();
     }
 
     private void initListView() {
@@ -124,7 +126,7 @@ public class ScreenActivity extends ServiceHolderActivity implements ScreenCallb
 
     @Override
     public void stopRound() {
-        ((Server)mService).sendCardsToUsers();
+        ((Server) mService).sendCardsToUsers();
         runOnUiThread(() -> {
             viewModel.showChoices(mBinding.cardRv);
             ((Server) mService).countRoundPts(viewModel.getCardAdapter());
@@ -147,7 +149,7 @@ public class ScreenActivity extends ServiceHolderActivity implements ScreenCallb
     @Override
     public void initDesk(String username) {
         for (int i = 0; i < Utils.DEFAULT_CARDS_NUM; i++) {
-            ((Server)mService).sendRandomCardToUser(username);
+            ((Server) mService).sendRandomCardToUser(username);
         }
     }
 

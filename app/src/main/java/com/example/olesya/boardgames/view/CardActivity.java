@@ -71,7 +71,7 @@ public class CardActivity extends ServiceHolderActivity implements ClientCallbac
         mBinding.cardRv.setItemAnimator(new FadeInDownAnimator());
         mBinding.cardRv.getItemAnimator().setAddDuration(100);
 
-        mAdapter = new CardPagerAdapter(new ArrayList<>());
+        mAdapter = new CardPagerAdapter(new ArrayList<>(), true);
         mAdapter.setClientCallback(this);
         mBinding.cardRv.setAdapter(mAdapter);
         itemTouchCallback = new ItemTouchCallback(mAdapter);

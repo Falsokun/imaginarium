@@ -8,11 +8,13 @@ import com.example.olesya.boardgames.models.BoundService;
 import com.example.olesya.boardgames.adapter.CardPagerAdapter;
 import com.example.olesya.boardgames.interfaces.ItemCallback;
 import com.example.olesya.boardgames.interfaces.ScreenCallback;
+import com.example.olesya.boardgames.models.ImageHolder;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Server extends BoundService {
@@ -24,9 +26,7 @@ public class Server extends BoundService {
     private int currentPosition = 0;
     ArrayList<Integer> order;
     private int winPts = 100;
-    private boolean isGameStopped = true;
     private int totalPlayerNum = 1;
-    private String randomCard;
 
     public Server() {
 
@@ -51,7 +51,6 @@ public class Server extends BoundService {
                         openConnection();
                     }
 
-                    isGameStopped = clients.size() == totalPlayerNum;
                     sendMessageToAllClients(Utils.CLIENT_COMMANDS.GAME_START);
                     choosePlayerOrder();
                     setTurnNextUser();
@@ -283,7 +282,6 @@ public class Server extends BoundService {
     }
 
     public void stopGame() {
-        isGameStopped = true;
         sendMessageToAllClients(Utils.CLIENT_COMMANDS.GAME_STOP);
     }
 
@@ -293,13 +291,14 @@ public class Server extends BoundService {
         }
     }
 
-    public String getRandomCard() {
+    public Card getRandomCard() {
         Random r = new Random();
-        return String.valueOf(r.nextInt(100));
+        List<ImageHolder> all = AppDatabase.getInstance(this).getImagesDao().getAllImages();
+        return new Card(all.get(r.nextInt(all.size() - 1)).getImageUrl());
     }
 
     public void sendRandomCardToUser(String username) {
-        sendCardToUser(username, getRandomCard());
+        sendCardToUser(username, getRandomCard().getImg());
     }
     //endregion
 }

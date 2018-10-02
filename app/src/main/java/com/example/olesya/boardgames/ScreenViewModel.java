@@ -26,7 +26,7 @@ public class ScreenViewModel extends ViewModel implements ItemCallback {
 
     public ScreenViewModel() {
         playerAdapter = new ListAdapter(new ArrayList<>());
-        cardAdapter = new CardPagerAdapter(new ArrayList<>());
+        cardAdapter = new CardPagerAdapter(new ArrayList<>(), false);
     }
 
     public void showChoices(RecyclerView recyclerView) {

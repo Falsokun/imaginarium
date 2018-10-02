@@ -6,7 +6,9 @@ import android.animation.AnimatorSet;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +20,11 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.TransitionOptions;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.olesya.boardgames.Card;
 import com.example.olesya.boardgames.R;
 import com.example.olesya.boardgames.databinding.LayoutCardBinding;
@@ -33,9 +40,11 @@ public class CardPagerAdapter extends RecyclerView.Adapter<CardPagerAdapter.Hold
     private ClientCallback clientCallback;
     private ScreenCallback itemCallback;
     private boolean isMainCaller;
+    private boolean isUser = true;
 
-    public CardPagerAdapter(ArrayList<Card> dataset) {
+    public CardPagerAdapter(ArrayList<Card> dataset, boolean isUser) {
         mDataSet = dataset;
+        this.isUser = isUser;
         for (int i = 0; i < mDataSet.size(); i++) {
             votesData.add(new ArrayList<>());
         }
@@ -48,9 +57,17 @@ public class CardPagerAdapter extends RecyclerView.Adapter<CardPagerAdapter.Hold
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
-        holder.getText().setText(mDataSet.get(position).getImg());
+//        holder.getText().setText(mDataSet.get(position).getImg());
         ArrayList<String> votes = votesData.get(position);
+        Glide.with(holder.mBinding.getRoot().getContext())
+                .load(mDataSet.get(position).getImg())
+                .apply(new RequestOptions().centerCrop().transform(new RoundedCorners(10)))
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(holder.mBinding.imgSource);
         holder.mBinding.votesContainer.removeAllViews();
+        if (isUser) {
+            holder.uncoverItem();
+        }
         holder.addChips(votes);
     }
 
