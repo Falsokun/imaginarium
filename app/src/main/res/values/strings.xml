@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RxJavaTest</string>
+    <string name="app_name">Board games</string>
     <string name="pl_imaginarium">Imaginarium</string>
     <string name="player_number">Player number</string>
     <string name="game_mode">Game mode</string>

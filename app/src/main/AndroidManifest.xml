@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.olesya.rxjavatest">
+    package="com.example.olesya.boardgames">
 
     <!--<uses-sdk android:minSdkVersion="14" />-->
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -20,8 +20,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".view.MainActivity"
-            android:screenOrientation="portrait">
+        <activity android:name="com.example.olesya.boardgames.view.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,15 +29,18 @@
         </activity>
 
         <activity
-            android:name=".view.ScreenActivity"
+            android:name=".view.MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.example.olesya.boardgames.view.ScreenActivity"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".view.CardActivity"
+            android:name="com.example.olesya.boardgames.view.CardActivity"
             android:windowSoftInputMode="stateHidden" />
 
-        <service android:name=".Server" />
-        <service android:name=".Client" />
+        <service android:name="com.example.olesya.boardgames.Server" />
+        <service android:name="com.example.olesya.boardgames.Client" />
     </application>
 
 </manifest>

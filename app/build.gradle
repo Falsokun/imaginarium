@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 26
     defaultConfig {
-        applicationId "com.example.olesya.rxjavatest"
+        applicationId "com.example.olesya.boardGames"
         minSdkVersion 21
         targetSdkVersion 26
         versionCode 1
@@ -67,4 +67,11 @@ dependencies {
     compile ('github.hellocsl:GalleryLayoutManager:1.0.6'){
         exclude group: 'com.android.support', module:'recyclerview-v7'
     }
+
+    implementation 'com.google.firebase:firebase-firestore:17.1.0'
+    implementation "android.arch.persistence.room:runtime:$lifecycle_version"
+    implementation "android.arch.persistence.room:runtime:$lifecycle_version"
+    annotationProcessor "android.arch.persistence.room:compiler:$lifecycle_version"
 }
+
+apply plugin: 'com.google.gms.google-services'
