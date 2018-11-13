@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "135709550361",
+    "firebase_url": "https://board-games-18b7a.firebaseio.com",
+    "project_id": "board-games-18b7a",
+    "storage_bucket": "board-games-18b7a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:135709550361:android:a7a9a672cb648055",
+        "android_client_info": {
+          "package_name": "com.example.olesya.boardGames"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "135709550361-unppus8aiktgid500q61ta3un3sit02j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcxaC5_UGwZSJWBeGIBo2kvpAzuUnXlYw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

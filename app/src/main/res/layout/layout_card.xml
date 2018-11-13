@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp">
+
+        <ImageView
+            android:id="@+id/img_source"
+            android:layout_width="180dp"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/std_mrgn" />
+
+        <ImageView
+            android:id="@+id/card_face"
+            android:layout_width="180dp"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/std_mrgn"
+            android:adjustViewBounds="true"
+            android:background="@drawable/card_face"
+            android:scaleType="fitEnd" />
+
+        <TextView
+            android:id="@+id/card_txt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:adjustViewBounds="true"
+            android:elevation="10dp"
+            android:scaleType="fitEnd" />
+
+        <LinearLayout
+            android:id="@+id/votes_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/std_mrgn"
+            android:animateLayoutChanges="true"
+            android:minHeight="@dimen/std_mrgn"
+            android:minWidth="@dimen/std_mrgn"
+            android:orientation="vertical" />
+    </FrameLayout>
+</layout>

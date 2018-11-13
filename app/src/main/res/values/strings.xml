@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">Board games</string>
+    <string name="pl_imaginarium">Imaginarium</string>
+    <string name="player_number">Player number</string>
+    <string name="game_mode">Game mode</string>
+    <string name="thinking_time">Time to think</string>
+    <string name="pts_to_win">Points to win</string>
+    <string name="start">Start</string>
+    <string name="OK">OK</string>
+    <string name="search">Search</string>
+    <string name="searching">Searching...</string>
+    <string name="waiting">Waiting for players</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="wifi_disabled_retry">Wifi disabled. Turn on Wifi and retry</string>
+    <string name="cancel">Cancel</string>
+    <string name="screen">Screen</string>
+    <string name="connecting">Connecting to device.</string>
+    <string name="player_status">Player status</string>
+    <string name="user_turn">User turn</string>
+    <string name="finish_turn">Waiting for choosing players options</string>
+    <string name="waiting_others">Waiting for other users</string>
+    <string name="choose_topic_and_card">Choose topic and card, your turn now</string>
+    <string name="nothing_found">Nothing found\\nHint: if nothing is found, may be other device is not searching</string>
+    <string name="found_devices">found devices:</string>
+    <string name="no_one_connected_to">No one connected to</string>
+    <string name="most_suitable_card">Create card which is the most suitable to the topic</string>
+    <string name="finish_round">Finish round</string>
+    <string name="err_persons_num">invalid persons num</string>
+    <string name="end_of_game">End of game</string>
+    <string name="round_results">round results</string>
+    <string name="err_no_p2p_conn">No connection to p2p server</string>
+    <string name="lost_server">Lost server</string>
+</resources>
