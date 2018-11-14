@@ -8,9 +8,9 @@ interface ScreenCallback {
 
     fun stopRound()
 
-    fun onAddUserEvent(clientName: String)
+    fun onAddUserEvent(username: String)
 
-    fun onRemoveUserEvent(clientName: String)
+    fun onRemoveUserEvent(username: String)
 
     fun initHand(username: String)
 }

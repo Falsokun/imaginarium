@@ -1,8 +1,6 @@
 package com.example.olesya.boardgames.connection;
 
 import android.content.Intent;
-import android.os.IBinder;
-import android.support.annotation.Nullable;
 
 import com.example.olesya.boardgames.Utils;
 import com.example.olesya.boardgames.adapter.CardPagerAdapter;
@@ -29,11 +27,6 @@ public class Server extends BoundService {
 
     }
 
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return binder;
-    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {

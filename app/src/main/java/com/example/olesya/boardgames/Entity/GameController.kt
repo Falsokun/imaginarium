@@ -92,11 +92,11 @@ constructor(context: Context, var players: MutableList<Player> = mutableListOf()
         }
     }
 
-    override fun onAddUserEvent(playerName: String) {
-        players.add(Player(playerName))
+    override fun onAddUserEvent(username: String) {
+        players.add(Player(username))
     }
 
-    override fun onRemoveUserEvent(clientName: String) {
+    override fun onRemoveUserEvent(username: String) {
         //TODO: remove
 //        players.removeIf { player -> player.username == clientName }
     }

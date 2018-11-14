@@ -8,7 +8,7 @@ import com.example.olesya.boardgames.databinding.ItemPlayerStatusBinding
 
 class PlayerAdapter : RecyclerView.Adapter<PlayerAdapter.Holder>() {
 
-    var players: MutableList<Player> = mutableListOf()
+    private var players: MutableList<Player> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         return Holder(ItemPlayerStatusBinding.inflate(LayoutInflater.from(parent.context), parent, false))

@@ -10,7 +10,9 @@ import android.support.annotation.Nullable;
 public class BoundService extends Service {
 
     protected final int PORT_NUMBER = 8888;
+
     protected MutableLiveData<String> serviceMessage = new MutableLiveData<>();
+
     protected MyBinder binder = new BoundService.MyBinder();
 
     public void setMessage(MutableLiveData<String> message) {
