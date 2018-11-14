@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.example.olesya.boardgames.R;
 import com.example.olesya.boardgames.Utils;
+import com.example.olesya.boardgames.connection.MenuModel;
 import com.example.olesya.boardgames.ui.view.CardActivity;
 import com.example.olesya.boardgames.ui.view.ScreenActivity;
 

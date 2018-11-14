@@ -42,12 +42,6 @@ class CardPagerAdapter : RecyclerView.Adapter<CardPagerAdapter.Holder>() {
         //TODO: ??
         holder.mBinding.votesContainer.removeAllViews()
         dataset[position].isVisible.subscribe { visibility -> holder.uncoverItem(visibility) }
-        /*ArrayList<String> votes = votesData.get(position);
-        holder.mBinding.votesContainer.removeAllViews();
-        if (isUser) {
-            holder.uncoverItem();
-        }
-        holder.addChips(votes);*/
     }
 
     fun setData(cards: List<ImaginariumCard>) {
@@ -92,16 +86,6 @@ class CardPagerAdapter : RecyclerView.Adapter<CardPagerAdapter.Holder>() {
             hide.cameraDistance = distance * scale
             show.cameraDistance = distance * scale
         }
-
-//        fun showItem(isVisible: Boolean) {
-//            if (isVisible) {
-//                mBinding.cardFace.visibility = View.GONE
-//                mBinding.imgSource.visibility = View.VISIBLE
-//            } else {
-//                mBinding.cardFace.visibility = View.VISIBLE
-//                mBinding.imgSource.visibility = View.GONE
-//            }
-//        }
     }
 
     //TODO: вывод очков и кто за кого проголосовал
