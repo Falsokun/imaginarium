@@ -3,7 +3,7 @@ package com.example.olesya.boardgames.adapter
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.example.olesya.boardgames.Entity.Player
+import com.example.olesya.boardgames.entity.Player
 import com.example.olesya.boardgames.databinding.ItemPlayerStatusBinding
 
 class PlayerAdapter : RecyclerView.Adapter<PlayerAdapter.Holder>() {

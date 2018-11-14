@@ -1,4 +1,4 @@
-package com.example.olesya.boardgames.Entity
+package com.example.olesya.boardgames.entity
 
 import android.arch.lifecycle.MutableLiveData
 

@@ -6,7 +6,7 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import com.example.olesya.boardgames.Entity.ImaginariumCard
+import com.example.olesya.boardgames.entity.ImaginariumCard
 import com.example.olesya.boardgames.R
 import com.example.olesya.boardgames.Utils
 import com.example.olesya.boardgames.adapter.CardPagerAdapter

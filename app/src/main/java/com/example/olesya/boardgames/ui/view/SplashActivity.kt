@@ -4,7 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
-import com.example.olesya.boardgames.Entity.ImageHolder
+import com.example.olesya.boardgames.entity.ImageHolder
 import com.example.olesya.boardgames.Utils
 import com.example.olesya.boardgames.database.AppDatabase
 import com.example.olesya.boardgames.database.ImageHolderDao
