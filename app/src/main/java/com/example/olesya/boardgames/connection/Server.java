@@ -1,13 +1,13 @@
-package com.example.olesya.boardgames;
+package com.example.olesya.boardgames.connection;
 
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import com.example.olesya.boardgames.Utils;
 import com.example.olesya.boardgames.adapter.CardPagerAdapter;
 import com.example.olesya.boardgames.interfaces.ItemCallback;
 import com.example.olesya.boardgames.interfaces.ScreenCallback;
-import com.example.olesya.boardgames.models.BoundService;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -26,7 +26,6 @@ public class Server extends BoundService {
     private int totalPlayerNum = 1;
 
     public Server() {
-
 
     }
 

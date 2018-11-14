@@ -1,4 +1,6 @@
-package com.example.olesya.boardgames;
+package com.example.olesya.boardgames.connection;
+
+import com.example.olesya.boardgames.Utils;
 
 import java.io.IOException;
 import java.io.PrintWriter;

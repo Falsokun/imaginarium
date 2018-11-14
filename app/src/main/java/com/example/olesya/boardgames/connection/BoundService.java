@@ -1,4 +1,4 @@
-package com.example.olesya.boardgames.models;
+package com.example.olesya.boardgames.connection;
 
 import android.app.Service;
 import android.arch.lifecycle.MutableLiveData;

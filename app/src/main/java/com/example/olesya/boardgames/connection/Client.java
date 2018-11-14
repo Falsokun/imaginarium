@@ -1,11 +1,12 @@
-package com.example.olesya.boardgames;
+package com.example.olesya.boardgames.connection;
 
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
 
-import com.example.olesya.boardgames.models.BoundService;
+import com.example.olesya.boardgames.R;
+import com.example.olesya.boardgames.Utils;
 import com.example.olesya.boardgames.interfaces.ClientCallback;
 
 import java.io.IOException;

@@ -40,8 +40,8 @@
             android:name=".ui.view.CardActivity"
             android:windowSoftInputMode="stateHidden" />
 
-        <service android:name="com.example.olesya.boardgames.Server" />
-        <service android:name="com.example.olesya.boardgames.Client" />
+        <service android:name="com.example.olesya.boardgames.connection.Server" />
+        <service android:name="com.example.olesya.boardgames.connection.Client" />
     </application>
 
 </manifest>

@@ -8,12 +8,12 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import com.example.olesya.boardgames.Entity.ImaginariumCard
 import com.example.olesya.boardgames.R
-import com.example.olesya.boardgames.Server
 import com.example.olesya.boardgames.Utils
 import com.example.olesya.boardgames.adapter.CardPagerAdapter
-import com.example.olesya.boardgames.adapter.PlayerStatusAdapter
+import com.example.olesya.boardgames.adapter.PlayerAdapter
+import com.example.olesya.boardgames.connection.Server
+import com.example.olesya.boardgames.connection.ServiceHolderActivity
 import com.example.olesya.boardgames.databinding.ActivityScreenImaginariumBinding
-import com.example.olesya.boardgames.models.ServiceHolderActivity
 import com.example.olesya.boardgames.ui.viewmodel.ScreenViewModel
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 
@@ -22,14 +22,14 @@ class ScreenActivity : ServiceHolderActivity() {
     private lateinit var mBinding: ActivityScreenImaginariumBinding
     private lateinit var viewModel: ScreenViewModel
     private var cardPagerAdapter: CardPagerAdapter = CardPagerAdapter()
-    private lateinit var playerStatusAdapter: PlayerStatusAdapter
+    private lateinit var playerStatusAdapter: PlayerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_screen_imaginarium)
         viewModel = ViewModelProviders.of(this).get(ScreenViewModel::class.java)
         viewModel.addPlayers(this, ArrayList())
-        playerStatusAdapter = PlayerStatusAdapter(ArrayList())
+        playerStatusAdapter = PlayerAdapter()
 
 //        initListView()
         initCardPager()

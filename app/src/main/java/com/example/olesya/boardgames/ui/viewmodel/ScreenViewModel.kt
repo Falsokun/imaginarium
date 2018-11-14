@@ -33,8 +33,7 @@ class ScreenViewModel : ViewModel(), ItemCallback {
             controller.shuffleCards()
     }
 
-    override fun onAddUserChoice(clientName: String?, currentChoice: Int) {
+    override fun onAddUserChoice(clientName: String, currentChoice: Int) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
-
 }

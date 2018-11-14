@@ -10,9 +10,8 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.NumberPicker;
 
-import com.example.olesya.boardgames.Entity.Card;
-import com.example.olesya.boardgames.models.ServiceHolderActivity;
-import com.example.olesya.boardgames.Client;
+import com.example.olesya.boardgames.connection.ServiceHolderActivity;
+import com.example.olesya.boardgames.connection.Client;
 import com.example.olesya.boardgames.ItemTouchCallback;
 import com.example.olesya.boardgames.R;
 import com.example.olesya.boardgames.Utils;
@@ -21,7 +20,6 @@ import com.example.olesya.boardgames.databinding.ActivityCardImaginariumBinding;
 import com.example.olesya.boardgames.interfaces.ClientCallback;
 
 import java.net.InetAddress;
-import java.util.ArrayList;
 
 import jp.wasabeef.recyclerview.animators.FadeInDownAnimator;
 

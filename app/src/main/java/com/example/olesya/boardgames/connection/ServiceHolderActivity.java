@@ -1,4 +1,4 @@
-package com.example.olesya.boardgames.models;
+package com.example.olesya.boardgames.connection;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.content.ComponentName;
@@ -10,7 +10,6 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
-import com.example.olesya.boardgames.Client;
 import com.example.olesya.boardgames.Utils;
 
 public abstract class ServiceHolderActivity extends AppCompatActivity {
