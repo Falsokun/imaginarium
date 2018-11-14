@@ -30,7 +30,7 @@
         </activity>
 
         <activity
-            android:name=".ui.view.MainActivity"
+            android:name=".ui.main.MainActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.view.ScreenActivity"

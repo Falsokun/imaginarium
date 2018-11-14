@@ -1,4 +1,4 @@
-package com.example.olesya.boardgames.ui.view;
+package com.example.olesya.boardgames.ui.main;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
-import com.example.olesya.boardgames.MenuFragment;
 import com.example.olesya.boardgames.R;
 
 public class MainActivity extends AppCompatActivity {

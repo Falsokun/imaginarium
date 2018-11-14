@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-//apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 27
@@ -71,16 +72,18 @@ dependencies {
 
     implementation "com.google.firebase:firebase-firestore:17.1.0"
     implementation "android.arch.persistence.room:runtime:$lifecycle_version"
-    annotationProcessor "android.arch.persistence.room:compiler:$lifecycle_version"
+    kapt "android.arch.persistence.room:compiler:$lifecycle_version"
     implementation 'com.github.bumptech.glide:glide:4.8.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'io.reactivex.rxjava2:rxjava:2.1.9'
     implementation 'io.reactivex.rxjava2:rxkotlin:2.2.0'
+
+    implementation "android.arch.persistence.room:rxjava2:${lifecycle_version}"
+    annotationProcessor "android.arch.persistence.room:compiler:${lifecycle_version}"
 }
 
 apply plugin: 'com.google.gms.google-services'
-
 repositories {
     mavenCentral()
 }

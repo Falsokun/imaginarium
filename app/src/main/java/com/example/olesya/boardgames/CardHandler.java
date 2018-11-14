@@ -1,8 +1,5 @@
 package com.example.olesya.boardgames;
 
-import com.example.olesya.boardgames.Entity.Card;
-import com.example.olesya.boardgames.Entity.ImaginariumCard;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;

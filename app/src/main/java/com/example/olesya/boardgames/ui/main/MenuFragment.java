@@ -1,4 +1,4 @@
-package com.example.olesya.boardgames;
+package com.example.olesya.boardgames.ui.main;
 
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.olesya.boardgames.R;
+import com.example.olesya.boardgames.Utils;
 import com.example.olesya.boardgames.databinding.FragmentMenuBinding;
 
 public class MenuFragment extends Fragment {

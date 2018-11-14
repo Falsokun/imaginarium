@@ -1,9 +1,8 @@
 package com.example.olesya.boardgames.Entity
 
-import com.example.olesya.boardgames.AppDatabase
-import java.util.*
 import android.content.Context
-import com.example.olesya.boardgames.models.ImageHolder
+import com.example.olesya.boardgames.database.AppDatabase
+import java.util.*
 import kotlin.collections.ArrayList
 
 //Val, var - объявление переменных, мне это не нужно, если в конструктор надо передать значения,
@@ -17,7 +16,7 @@ class Deck(context: Context) {
     var total: ArrayList<Card> = ArrayList()
 
     init {
-        val all = AppDatabase.getInstance(context).imagesDao.allImages
+        val all = AppDatabase.getInstance(context).imagesDao().getAllImages()
         val random = Random()
         for (img: ImageHolder in all) {
             total.add(Card(img.imageUrl, false))

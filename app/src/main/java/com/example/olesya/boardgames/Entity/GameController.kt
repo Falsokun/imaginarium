@@ -31,7 +31,9 @@ constructor(context: Context, var players: MutableList<Player> = mutableListOf()
         val cards = mutableListOf<ImaginariumCard>()
         for (i in 0..5) {
             //TODO:!!!
-            cards.add(ImaginariumCard(deck.getRandomCard()!!))
+            val card = ImaginariumCard(deck.getRandomCard()!!)
+            card.isVisible.onNext(true)
+            cards.add(card)
         }
 
         screenCards.postValue(cards)

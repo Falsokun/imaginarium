@@ -1,4 +1,4 @@
-package com.example.olesya.boardgames;
+package com.example.olesya.boardgames.ui.main;
 
 import android.Manifest;
 import android.app.Activity;
@@ -17,6 +17,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.olesya.boardgames.R;
+import com.example.olesya.boardgames.Utils;
 import com.example.olesya.boardgames.ui.view.CardActivity;
 import com.example.olesya.boardgames.ui.view.ScreenActivity;
 

@@ -1,4 +1,4 @@
-package com.example.olesya.boardgames.ui.view;
+package com.example.olesya.boardgames.ui.main;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.example.olesya.boardgames.MenuFragment;
 import com.example.olesya.boardgames.R;
 
 public class MainFragment extends Fragment {

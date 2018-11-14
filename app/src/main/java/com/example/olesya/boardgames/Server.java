@@ -4,19 +4,15 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import com.example.olesya.boardgames.Entity.Card;
-import com.example.olesya.boardgames.models.BoundService;
 import com.example.olesya.boardgames.adapter.CardPagerAdapter;
 import com.example.olesya.boardgames.interfaces.ItemCallback;
 import com.example.olesya.boardgames.interfaces.ScreenCallback;
-import com.example.olesya.boardgames.models.ImageHolder;
+import com.example.olesya.boardgames.models.BoundService;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
 public class Server extends BoundService {
     private ServerSocket serverSocket;

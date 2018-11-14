@@ -6,10 +6,11 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
-import com.example.olesya.boardgames.AppDatabase;
+import com.example.olesya.boardgames.Entity.ImageHolder;
 import com.example.olesya.boardgames.Utils;
-import com.example.olesya.boardgames.interfaces.ImageHolderDao;
-import com.example.olesya.boardgames.models.ImageHolder;
+import com.example.olesya.boardgames.database.AppDatabase;
+import com.example.olesya.boardgames.database.ImageHolderDao;
+import com.example.olesya.boardgames.ui.main.MainActivity;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
@@ -22,7 +23,7 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ImageHolderDao dao = AppDatabase.getInstance(this).getImagesDao();
+        ImageHolderDao dao = AppDatabase.Companion.getInstance(this).imagesDao();
         ArrayList<ImageHolder> holders = new ArrayList<>();
         db.collection(Utils.DB_PERSEPHONE)
                 .get()

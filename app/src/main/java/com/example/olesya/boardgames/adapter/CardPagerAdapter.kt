@@ -1,6 +1,5 @@
 package com.example.olesya.boardgames.adapter
 
-import android.animation.Animator
 import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
 import android.support.v7.widget.RecyclerView
@@ -42,7 +41,6 @@ class CardPagerAdapter : RecyclerView.Adapter<CardPagerAdapter.Holder>() {
 
         //TODO: ??
         holder.mBinding.votesContainer.removeAllViews()
-//        holder.showItem(dataset[position].isVisible.value)
         dataset[position].isVisible.subscribe { visibility -> holder.uncoverItem(visibility) }
         /*ArrayList<String> votes = votesData.get(position);
         holder.mBinding.votesContainer.removeAllViews();
@@ -79,7 +77,7 @@ class CardPagerAdapter : RecyclerView.Adapter<CardPagerAdapter.Holder>() {
             }
         }
 
-        fun startAnimation(hide: View, show: View) {
+        private fun startAnimation(hide: View, show: View) {
             val animationHide = AnimatorInflater.loadAnimator(mBinding.root.context,
                     R.animator.animation_rotate_hide) as AnimatorSet
             animationHide.setTarget(hide)
@@ -95,15 +93,15 @@ class CardPagerAdapter : RecyclerView.Adapter<CardPagerAdapter.Holder>() {
             show.cameraDistance = distance * scale
         }
 
-        fun showItem(isVisible: Boolean) {
-            if (isVisible) {
-                mBinding.cardFace.visibility = View.GONE
-                mBinding.imgSource.visibility = View.VISIBLE
-            } else {
-                mBinding.cardFace.visibility = View.VISIBLE
-                mBinding.imgSource.visibility = View.GONE
-            }
-        }
+//        fun showItem(isVisible: Boolean) {
+//            if (isVisible) {
+//                mBinding.cardFace.visibility = View.GONE
+//                mBinding.imgSource.visibility = View.VISIBLE
+//            } else {
+//                mBinding.cardFace.visibility = View.VISIBLE
+//                mBinding.imgSource.visibility = View.GONE
+//            }
+//        }
     }
 
     //TODO: вывод очков и кто за кого проголосовал

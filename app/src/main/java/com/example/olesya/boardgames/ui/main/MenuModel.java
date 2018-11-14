@@ -1,4 +1,4 @@
-package com.example.olesya.boardgames;
+package com.example.olesya.boardgames.ui.main;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.content.BroadcastReceiver;
