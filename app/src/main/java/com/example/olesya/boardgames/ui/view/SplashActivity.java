@@ -1,9 +1,7 @@
-package com.example.olesya.boardgames.view;
+package com.example.olesya.boardgames.ui.view;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;

@@ -1,4 +1,4 @@
-package com.example.olesya.boardgames.view;
+package com.example.olesya.boardgames.ui.view;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

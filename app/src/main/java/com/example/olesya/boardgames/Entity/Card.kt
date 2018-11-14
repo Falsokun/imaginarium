@@ -1,9 +1,13 @@
 package com.example.olesya.boardgames.Entity
 
-import java.util.ArrayList
+import io.reactivex.subjects.BehaviorSubject
 
-class Card(var img: String, var playerName: String = "player") {
 
-    val votes = ArrayList<Int>()
+open class Card(val img: String, isVisible: Boolean) {
 
+    val isVisible: BehaviorSubject<Boolean> = BehaviorSubject.create<Boolean>()
+
+    init {
+        this.isVisible.onNext(isVisible)
+    }
 }

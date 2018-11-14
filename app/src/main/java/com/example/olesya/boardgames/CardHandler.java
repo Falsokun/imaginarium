@@ -1,6 +1,7 @@
 package com.example.olesya.boardgames;
 
 import com.example.olesya.boardgames.Entity.Card;
+import com.example.olesya.boardgames.Entity.ImaginariumCard;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -29,7 +30,7 @@ public class CardHandler implements Runnable {
     public void run() {
         try {
             acceptUserEvent();
-            server.getScreenCallbacks().initDesk(clientName);
+            server.getScreenCallbacks().initHand(clientName);
             while (true) {
                 if (inMessage.hasNext()) {
                     String clientMessage = inMessage.nextLine();
@@ -63,13 +64,12 @@ public class CardHandler implements Runnable {
         switch (action) {
             case Utils.CLIENT_COMMANDS.CLIENT_MAIN_FINISHED:
                 card = clientMessage.split(Utils.DELIM)[1];
-                server.getCallbacks().onSelectedCardEvent(new Card(card, clientName));
+//                server.getCallbacks().onSelectedCardEvent(new Card(card, false, clientName));
                 server.allowUsersToChoose(clientName);
 //                server.showMessageFromClient(clientName, action);
                 break;
             case Utils.CLIENT_COMMANDS.CLIENT_USER_FINISHED:
                 card = clientMessage.split(Utils.DELIM)[1];
-                server.getCallbacks().onUserTurnFinished(new Card(card, clientName));
                 break;
             case Utils.CLIENT_COMMANDS.CLIENT_USER_CHOOSE_FINISHED:
                 currentChoice = Integer.valueOf(clientMessage.split(Utils.DELIM)[1]) - 1;

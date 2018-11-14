@@ -17,8 +17,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.olesya.boardgames.view.CardActivity;
-import com.example.olesya.boardgames.view.ScreenActivity;
+import com.example.olesya.boardgames.ui.view.CardActivity;
+import com.example.olesya.boardgames.ui.view.ScreenActivity;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;

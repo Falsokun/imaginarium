@@ -204,21 +204,21 @@ public class Server extends BoundService {
 
     //пока не расписано, что все отгадали
     public void countRoundPts(CardPagerAdapter cardAdapter) {
-        String mainUserName = getCurrentMainUser().getName();
-        for (int i = 0; i < cardAdapter.getData().size(); i++) {
-            Card curCard = cardAdapter.getData().get(i);
-            ArrayList<String> curVotes = cardAdapter.getVotesByNum(i);
-            if (curCard.getPlayerName().equals(mainUserName)) {
-                if (cardAdapter.getVotesByNum(i).size() != 0) {
-                    getCurrentMainUser().addPts(Utils.GUESSED_PTS);
-                    addToUsersPts(curVotes);
-                } else { //никто не угадал
-                    getCurrentMainUser().addPts(Utils.NO_ONE_GUESSED_PTS);
-                }
-            } else {
-                findPlayerByName(curCard.getPlayerName()).addPts(curVotes.size());
-            }
-        }
+//        String mainUserName = getCurrentMainUser().getName();
+//        for (int i = 0; i < cardAdapter.getData().size(); i++) {
+//            Imagin curCard = cardAdapter.getData().get(i);
+//            ArrayList<String> curVotes = cardAdapter.getVotesByNum(i);
+//            if (curCard.getPlayerName().equals(mainUserName)) {
+//                if (cardAdapter.getVotesByNum(i).size() != 0) {
+//                    getCurrentMainUser().addPts(Utils.GUESSED_PTS);
+//                    addToUsersPts(curVotes);
+//                } else { //никто не угадал
+//                    getCurrentMainUser().addPts(Utils.NO_ONE_GUESSED_PTS);
+//                }
+//            } else {
+//                findPlayerByName(curCard.getPlayerName()).addPts(curVotes.size());
+//            }
+//        }
     }
 
 
@@ -284,22 +284,6 @@ public class Server extends BoundService {
 
     public void stopGame() {
         sendMessageToAllClients(Utils.CLIENT_COMMANDS.GAME_STOP);
-    }
-
-    public void sendCardsToUsers() {
-        for (CardHandler cardHandler : clients) {
-            sendRandomCardToUser(cardHandler.getName());
-        }
-    }
-
-    public Card getRandomCard() {
-        Random r = new Random();
-        List<ImageHolder> all = AppDatabase.getInstance(this).getImagesDao().getAllImages();
-        return new Card(all.get(r.nextInt(all.size() - 1)).getImageUrl());
-    }
-
-    public void sendRandomCardToUser(String username) {
-        sendCardToUser(username, getRandomCard().getImg());
     }
     //endregion
 }

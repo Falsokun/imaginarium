@@ -1,4 +1,4 @@
-package com.example.olesya.boardgames.view;
+package com.example.olesya.boardgames.ui.view;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -71,8 +71,8 @@ public class CardActivity extends ServiceHolderActivity implements ClientCallbac
         mBinding.cardRv.setItemAnimator(new FadeInDownAnimator());
         mBinding.cardRv.getItemAnimator().setAddDuration(100);
 
-        mAdapter = new CardPagerAdapter(new ArrayList<>(), true);
-        mAdapter.setClientCallback(this);
+//        mAdapter = new CardPagerAdapter(new ArrayList<>(), true);
+//        mAdapter.setClientCallback(this);
         mBinding.cardRv.setAdapter(mAdapter);
         itemTouchCallback = new ItemTouchCallback(mAdapter);
         ItemTouchHelper touchHelper = new ItemTouchHelper(itemTouchCallback);
@@ -82,8 +82,8 @@ public class CardActivity extends ServiceHolderActivity implements ClientCallbac
     @Override
     public void addCardCallback(String cardUrl) {
         runOnUiThread(() -> {
-            mAdapter.insert(0, new Card(cardUrl, ""));
-            mBinding.cardRv.scrollToPosition(0);
+//            mAdapter.insert(0, new Card(cardUrl, ""));
+//            mBinding.cardRv.scrollToPosition(0);
         });
     }
 
@@ -91,7 +91,7 @@ public class CardActivity extends ServiceHolderActivity implements ClientCallbac
     public void onMainTurnEvent() {
         runOnUiThread(() -> mBinding.title.setText(R.string.choose_topic_and_card));
         itemTouchCallback.setSwipeEnabled(true);
-        mAdapter.setMainCaller(true);
+//        mAdapter.setMainCaller(true);
     }
 
     @Override
@@ -138,7 +138,7 @@ public class CardActivity extends ServiceHolderActivity implements ClientCallbac
     public void onUserTurnEvent() {
         runOnUiThread(() -> mBinding.title.setText(R.string.user_turn));
         itemTouchCallback.setSwipeEnabled(true);
-        mAdapter.setMainCaller(false);
+//        mAdapter.setMainCaller(false);
     }
 
     @Override

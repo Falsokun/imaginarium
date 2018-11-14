@@ -21,7 +21,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.example.olesya.boardgames.view.SplashActivity">
+        <activity android:name=".ui.view.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,14 +30,14 @@
         </activity>
 
         <activity
-            android:name=".view.MainActivity"
+            android:name=".ui.view.MainActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.olesya.boardgames.view.ScreenActivity"
+            android:name=".ui.view.ScreenActivity"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name="com.example.olesya.boardgames.view.CardActivity"
+            android:name=".ui.view.CardActivity"
             android:windowSoftInputMode="stateHidden" />
 
         <service android:name="com.example.olesya.boardgames.Server" />
