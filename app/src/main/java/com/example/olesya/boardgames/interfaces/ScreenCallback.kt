@@ -1,6 +1,7 @@
 package com.example.olesya.boardgames.interfaces
 
-import com.example.olesya.boardgames.Entity.Player
+import com.example.olesya.boardgames.entity.Player
+
 
 interface ScreenCallback {
 

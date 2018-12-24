@@ -2,9 +2,9 @@ package com.example.olesya.boardgames.ui.viewmodel
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import com.example.olesya.boardgames.Entity.Card
-import com.example.olesya.boardgames.Entity.GameController
-import com.example.olesya.boardgames.Entity.ImaginariumCard
+import com.example.olesya.boardgames.entity.Card
+import com.example.olesya.boardgames.entity.GameController
+import com.example.olesya.boardgames.entity.ImaginariumCard
 import com.example.olesya.boardgames.interfaces.ItemCallback
 
 class ScreenViewModel : ViewModel(), ItemCallback {

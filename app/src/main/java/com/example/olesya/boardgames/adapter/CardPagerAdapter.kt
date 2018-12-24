@@ -10,9 +10,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
-import com.example.olesya.boardgames.Entity.ImaginariumCard
+import com.example.olesya.boardgames.entity.ImaginariumCard
 import com.example.olesya.boardgames.R
 import com.example.olesya.boardgames.databinding.LayoutCardBinding
+import com.google.android.gms.common.util.CollectionUtils.mutableListOf
 
 
 class CardPagerAdapter : RecyclerView.Adapter<CardPagerAdapter.Holder>() {

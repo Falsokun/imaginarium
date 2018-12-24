@@ -3,6 +3,7 @@ package com.example.olesya.boardgames.connection
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
+import com.example.olesya.boardgames.R
 import com.example.olesya.boardgames.Utils
 import com.example.olesya.boardgames.interfaces.ClientCallback
 import java.io.PrintWriter
@@ -31,7 +32,10 @@ class ClientService : BoundService() {
 
     private fun checkConnectionConfig(intent: Intent?) {
         val inetAddress = intent?.extras?.getSerializable(Utils.CLIENT_CONFIG.HOST_CONFIG) as InetAddress
-        host = inetAddress.hostName
+        Thread {
+            host = inetAddress.hostName
+        }.start()
+
         username = intent.extras.getString(Utils.CLIENT_CONFIG.USERNAME)
     }
 
@@ -46,30 +50,23 @@ class ClientService : BoundService() {
         }.start()
     }
 
-    fun startHandlingEvents() {
+    private fun startHandlingEvents() {
         if (!socketCl.isConnected) {
             return
         }
 
-//        while (true) {
-//            if (inMessage.hasNext()) {
-//                val serverMsg = inMessage.nextLine()
-//                // если сервер отправляет данное сообщение, то цикл прерывается и
-//                // клиент выходит из чата
-//                if (serverMsg.equals(Utils.CLIENT_CONFIG.END_MSG, ignoreCase = true)) {
-//                    serviceMessage.postValue(resources.getString(R.string.lost_server))
-//                    break
-//                }
-//
-//                handleServerMessage(serverMsg)
-//            }
-//            try {
-//                Thread.sleep(100)
-//            } catch (e: InterruptedException) {
-//                e.printStackTrace()
-//            }
-//
-//        }
+        while (true) {
+            if (inMessage.hasNext()) {
+                val serverMsg = inMessage.nextLine()
+                if (serverMsg.equals(Utils.CLIENT_CONFIG.END_MSG, ignoreCase = true)) {
+                    serviceMessage.postValue(resources.getString(R.string.lost_server))
+                    break
+                }
+
+                handleServerMessage(serverMsg)
+                Thread.sleep(100)
+            }
+        }
     }
 
     private fun sendMessage(str: String) {

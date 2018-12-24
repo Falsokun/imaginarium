@@ -2,9 +2,9 @@ package com.example.olesya.boardgames.connection
 
 import android.content.Intent
 import android.util.Log
-import com.example.olesya.boardgames.Entity.GameController
-import com.example.olesya.boardgames.Entity.Player
 import com.example.olesya.boardgames.Utils
+import com.example.olesya.boardgames.entity.GameController
+import com.example.olesya.boardgames.entity.Player
 import com.example.olesya.boardgames.interfaces.ServerCallback
 import java.net.ServerSocket
 
