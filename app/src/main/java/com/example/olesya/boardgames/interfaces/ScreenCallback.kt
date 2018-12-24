@@ -1,5 +1,7 @@
 package com.example.olesya.boardgames.interfaces
 
+import com.example.olesya.boardgames.Entity.Player
+
 interface ScreenCallback {
 
     fun onStartNewRound()
@@ -8,7 +10,7 @@ interface ScreenCallback {
 
     fun stopRound()
 
-    fun onAddUserEvent(username: String)
+    fun onAddUserEvent(username: String, renamedFrom: String): Player
 
     fun onRemoveUserEvent(username: String)
 

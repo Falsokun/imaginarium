@@ -27,7 +27,7 @@ public abstract class ServiceHolderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         initServiceConnection();
         serviceMessage.observe(this, v -> Utils.showAlert(this, serviceMessage.getValue()));
-        serverMessage.observe(this, v -> ((Client) mService).onUserAction(v));
+        serverMessage.observe(this, v -> ((ClientService) mService).onUserAction(v));
     }
 
     @Override
@@ -49,7 +49,7 @@ public abstract class ServiceHolderActivity extends AppCompatActivity {
             public void onServiceConnected(ComponentName name, IBinder binder) {
                 mService = ((BoundService.MyBinder) binder).getService();
                 setCallbacks();
-                mService.setMessage(serviceMessage);
+                mService.setServiceMessage(serviceMessage);
                 serviceBound = true;
             }
 

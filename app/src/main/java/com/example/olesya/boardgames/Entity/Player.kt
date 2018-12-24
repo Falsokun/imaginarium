@@ -5,7 +5,7 @@ import android.arch.lifecycle.MutableLiveData
 /**
  * Инициализация username в конструкторе!
  */
-class Player constructor(var username: String = "player1") {
+class Player constructor(var username: String = "player") {
 
     var score: MutableLiveData<Int> = MutableLiveData()
 
@@ -15,7 +15,7 @@ class Player constructor(var username: String = "player1") {
     var playerStatus: String = ""
 
     init {
-        score.value = 0
+        score.postValue(0)
         cards.postValue(ArrayList())
     }
 

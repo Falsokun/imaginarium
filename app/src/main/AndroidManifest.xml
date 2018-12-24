@@ -41,7 +41,7 @@
             android:windowSoftInputMode="stateHidden" />
 
         <service android:name="com.example.olesya.boardgames.connection.Server" />
-        <service android:name="com.example.olesya.boardgames.connection.Client" />
+        <service android:name="com.example.olesya.boardgames.connection.ClientService" />
         <service android:name=".connection.BoundService" />
         <service android:name=".connection.ServerService" />
     </application>

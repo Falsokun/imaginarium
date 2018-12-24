@@ -46,7 +46,7 @@ public class MenuViewModel extends ViewModel {
     private void startGame(Context context, String username, int gameMode, int playerNum, int ptsToWin) {
         if (gameMode == Utils.GAME_MODE.SCREEN_MODE) {
             Intent intent = new Intent(context, ScreenActivity.class);
-            intent.putExtra(Utils.CLIENT_NUM, playerNum);
+            intent.putExtra(Utils.CLIENT_NUM, 1);
             intent.putExtra(Utils.WIN_PTS, ptsToWin);
             context.startActivity(intent);
         } else if (gameMode == Utils.GAME_MODE.CARD_MODE) {

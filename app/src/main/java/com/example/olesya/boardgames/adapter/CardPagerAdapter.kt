@@ -50,6 +50,11 @@ class CardPagerAdapter : RecyclerView.Adapter<CardPagerAdapter.Holder>() {
         notifyItemRangeInserted(0, dataset.size)
     }
 
+    fun add(card: ImaginariumCard) {
+        dataset.add(0, card)
+        notifyItemInserted(0)
+    }
+
     inner class Holder(var mBinding: LayoutCardBinding) : RecyclerView.ViewHolder(mBinding.root),
             View.OnLongClickListener {
 

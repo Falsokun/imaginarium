@@ -28,7 +28,6 @@ class ScreenActivity : ServiceHolderActivity() {
         super.onCreate(savedInstanceState)
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_screen_imaginarium)
         viewModel = ViewModelProviders.of(this).get(ScreenViewModel::class.java)
-        viewModel.addPlayers(this, ArrayList())
         playerStatusAdapter = PlayerAdapter()
 
 //        initListView()
@@ -46,10 +45,12 @@ class ScreenActivity : ServiceHolderActivity() {
     }
 
     override fun setCallbacks() {
-        (mService as Server).callbacks = viewModel
-        (mService as Server).screenCallbacks = viewModel.controller
+        viewModel.controller = (mService as Server).gameController
+        viewModel.controller.lcOwner = this
+        viewModel.controller.screenCards.observe(this,
+                //TODO: opyat kakoj to pizdec
+                Observer<MutableList<ImaginariumCard>> { cards -> cardPagerAdapter.setData(cards?.toList()!!) })
     }
-
 
     private fun startServerService() {
         mServiceIntent = Intent(this, Server::class.java)
@@ -62,7 +63,6 @@ class ScreenActivity : ServiceHolderActivity() {
 
         startService(mServiceIntent)
     }
-
 
     private fun initCardPager() {
         mBinding.cardRv.setHasFixedSize(true)
@@ -84,10 +84,6 @@ class ScreenActivity : ServiceHolderActivity() {
 //                super.onItemRangeRemoved(positionStart, itemCount);
 //            }
 //        });
-
-        viewModel.controller.screenCards.observe(this,
-                //TODO: opyat kakoj to pizdec
-                Observer<MutableList<ImaginariumCard>> { cards -> cardPagerAdapter.setData(cards?.toList()!!) })
     }
 }
 

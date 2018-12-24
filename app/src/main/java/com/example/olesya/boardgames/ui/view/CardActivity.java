@@ -10,12 +10,13 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.NumberPicker;
 
-import com.example.olesya.boardgames.connection.ServiceHolderActivity;
-import com.example.olesya.boardgames.connection.Client;
+import com.example.olesya.boardgames.Entity.ImaginariumCard;
 import com.example.olesya.boardgames.ItemTouchCallback;
 import com.example.olesya.boardgames.R;
 import com.example.olesya.boardgames.Utils;
 import com.example.olesya.boardgames.adapter.CardPagerAdapter;
+import com.example.olesya.boardgames.connection.ClientService;
+import com.example.olesya.boardgames.connection.ServiceHolderActivity;
 import com.example.olesya.boardgames.databinding.ActivityCardImaginariumBinding;
 import com.example.olesya.boardgames.interfaces.ClientCallback;
 
@@ -40,7 +41,7 @@ public class CardActivity extends ServiceHolderActivity implements ClientCallbac
                 .getSerializableExtra(Utils.CLIENT_CONFIG.HOST_CONFIG);
         startClientService(screenAddress, username);
         mBinding.buttonSend.setOnClickListener(v -> {
-            Client client = (Client) getService();
+            ClientService client = (ClientService) getService();
             String message = mBinding.testMsg.getText().toString();
             client.onUserAction(message);
         });
@@ -50,12 +51,12 @@ public class CardActivity extends ServiceHolderActivity implements ClientCallbac
 
     @Override
     public void setCallbacks() {
-        ((Client) mService).setCallbacks(this);
-        ((Client)mService).start();
+        ((ClientService) mService).setCallback(this);
+        ((ClientService)mService).start();
     }
 
     protected void startClientService(InetAddress screenAddress, String username) {
-        mServiceIntent = new Intent(this, Client.class);
+        mServiceIntent = new Intent(this, ClientService.class);
         mServiceIntent.putExtra(Utils.ACTION_SERVER_SERVICE, false);
         mServiceIntent.putExtra(Utils.CLIENT_CONFIG.HOST_CONFIG, screenAddress);
         mServiceIntent.putExtra(Utils.CLIENT_CONFIG.USERNAME, username);
@@ -69,7 +70,7 @@ public class CardActivity extends ServiceHolderActivity implements ClientCallbac
         mBinding.cardRv.setItemAnimator(new FadeInDownAnimator());
         mBinding.cardRv.getItemAnimator().setAddDuration(100);
 
-//        mAdapter = new CardPagerAdapter(new ArrayList<>(), true);
+        mAdapter = new CardPagerAdapter();
 //        mAdapter.setClientCallback(this);
         mBinding.cardRv.setAdapter(mAdapter);
         itemTouchCallback = new ItemTouchCallback(mAdapter);
@@ -80,8 +81,8 @@ public class CardActivity extends ServiceHolderActivity implements ClientCallbac
     @Override
     public void addCardCallback(String cardUrl) {
         runOnUiThread(() -> {
-//            mAdapter.insert(0, new Card(cardUrl, ""));
-//            mBinding.cardRv.scrollToPosition(0);
+            mAdapter.add(new ImaginariumCard(cardUrl, true));
+            mBinding.cardRv.scrollToPosition(0);
         });
     }
 
