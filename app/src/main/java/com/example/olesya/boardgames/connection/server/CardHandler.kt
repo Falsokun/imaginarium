@@ -1,7 +1,7 @@
-package com.example.olesya.boardgames.connection
+package com.example.olesya.boardgames.connection.server
 
 import android.util.Log
-import com.example.olesya.boardgames.Utils
+import com.example.olesya.boardgames.Commands
 import com.example.olesya.boardgames.entity.GameController
 import com.example.olesya.boardgames.entity.Player
 import java.io.PrintWriter
@@ -21,7 +21,7 @@ class CardHandler(socket: Socket, var gameController: GameController) : Runnable
             if (inMessage.hasNext()) {
                 val clientMessage = inMessage.nextLine()
                 handleClientMessage(clientMessage)
-                if (clientMessage.toUpperCase() == Utils.CLIENT_CONFIG.END_MSG) {
+                if (clientMessage.toUpperCase() == Commands.CLIENT_CONFIG.END_MSG) {
                     break
                 }
             }

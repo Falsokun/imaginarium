@@ -1,4 +1,4 @@
-package com.example.olesya.boardgames.connection
+package com.example.olesya.boardgames.connection.common
 
 import android.app.Service
 import android.arch.lifecycle.MutableLiveData
@@ -12,7 +12,7 @@ open class BoundService: Service() {
 
     var serviceMessage: MutableLiveData<String> = MutableLiveData()
 
-    val binder: BoundService.MyBinder = MyBinder()
+    val binder: MyBinder = MyBinder()
 
     override fun onBind(intent: Intent?): IBinder? {
         return binder

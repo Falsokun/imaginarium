@@ -9,7 +9,7 @@ class Player constructor(var username: String = "player") {
 
     var score: MutableLiveData<Int> = MutableLiveData()
 
-    var cards: MutableLiveData<ArrayList<Card>> = MutableLiveData()
+    var cards: MutableLiveData<MutableList<Card>> = MutableLiveData()
 
     //TODO: status
     var playerStatus: String = ""
@@ -27,5 +27,11 @@ class Player constructor(var username: String = "player") {
 
     fun changeScore(pts : Int) {
         score.postValue(score.value?.plus(pts))
+    }
+
+    fun removeCard(position: Int) {
+        val cur = cards.value
+        cur?.removeAt(position)
+        cards.postValue(cur)
     }
 }

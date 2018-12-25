@@ -6,12 +6,13 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import com.example.olesya.boardgames.Commands
 import com.example.olesya.boardgames.R
 import com.example.olesya.boardgames.Utils
 import com.example.olesya.boardgames.adapter.CardPagerAdapter
 import com.example.olesya.boardgames.adapter.PlayerAdapter
-import com.example.olesya.boardgames.connection.Server
-import com.example.olesya.boardgames.connection.ServiceHolderActivity
+import com.example.olesya.boardgames.connection.common.ServiceHolderActivity
+import com.example.olesya.boardgames.connection.server.Server
 import com.example.olesya.boardgames.databinding.ActivityScreenImaginariumBinding
 import com.example.olesya.boardgames.entity.ImaginariumCard
 import com.example.olesya.boardgames.ui.viewmodel.ScreenViewModel
@@ -34,7 +35,11 @@ class ScreenActivity : ServiceHolderActivity() {
         initCardPager()
         startServerService()
 
-        viewModel.message.observe(this, Observer<String> { s -> Utils.showAlert(this, s) })
+        viewModel.message.observe(this, Observer<String> { s ->
+            if (s != null) {
+                Utils.showAlert(this, s)
+            }
+        })
         //TODO: если аргумент лямбда выражения не используется, то в фигурных скобках можно его не писать
         mBinding.buttonSend.setOnClickListener { serviceMessage.postValue("anything") }
     }
@@ -49,16 +54,20 @@ class ScreenActivity : ServiceHolderActivity() {
         viewModel.controller.lcOwner = this
         viewModel.controller.screenCards.observe(this,
                 //TODO: opyat kakoj to pizdec
-                Observer<MutableList<ImaginariumCard>> { cards -> cardPagerAdapter.setData(cards?.toList()!!) })
+                Observer<MutableList<ImaginariumCard>> { cards ->
+                    if (cards != null) {
+                        cardPagerAdapter.setData(cards)
+                    }
+                })
     }
 
     private fun startServerService() {
         mServiceIntent = Intent(this, Server::class.java)
         if (intent.extras != null) {
-            val playerNum = intent.extras.getInt(Utils.CLIENT_NUM)
-            val win = intent.extras.getInt(Utils.WIN_PTS)
-            mServiceIntent.putExtra(Utils.CLIENT_NUM, playerNum)
-            mServiceIntent.putExtra(Utils.WIN_PTS, win)
+            val playerNum = intent.extras.getInt(Commands.CLIENT_NUM)
+            val win = intent.extras.getInt(Commands.WIN_PTS)
+            mServiceIntent.putExtra(Commands.CLIENT_NUM, playerNum)
+            mServiceIntent.putExtra(Commands.WIN_PTS, win)
         }
 
         startService(mServiceIntent)

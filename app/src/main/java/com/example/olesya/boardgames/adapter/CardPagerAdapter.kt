@@ -10,15 +10,15 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
-import com.example.olesya.boardgames.entity.ImaginariumCard
 import com.example.olesya.boardgames.R
 import com.example.olesya.boardgames.databinding.LayoutCardBinding
+import com.example.olesya.boardgames.entity.Card
 import com.google.android.gms.common.util.CollectionUtils.mutableListOf
 
 
 class CardPagerAdapter : RecyclerView.Adapter<CardPagerAdapter.Holder>() {
 
-    var dataset: MutableList<ImaginariumCard> = mutableListOf()
+    var dataset: MutableList<Card> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         return Holder(LayoutCardBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -45,13 +45,13 @@ class CardPagerAdapter : RecyclerView.Adapter<CardPagerAdapter.Holder>() {
         dataset[position].isVisible.subscribe { visibility -> holder.uncoverItem(visibility) }
     }
 
-    fun setData(cards: List<ImaginariumCard>) {
+    fun <T : Card> setData(cards: MutableList<T>) {
         dataset.clear()
         dataset.addAll(cards)
         notifyItemRangeInserted(0, dataset.size)
     }
 
-    fun add(card: ImaginariumCard) {
+    fun add(card: Card) {
         dataset.add(0, card)
         notifyItemInserted(0)
     }

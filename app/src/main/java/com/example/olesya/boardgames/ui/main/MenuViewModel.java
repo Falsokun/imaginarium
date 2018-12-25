@@ -17,9 +17,9 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.olesya.boardgames.Commands;
 import com.example.olesya.boardgames.R;
 import com.example.olesya.boardgames.Utils;
-import com.example.olesya.boardgames.connection.MenuModel;
 import com.example.olesya.boardgames.ui.view.CardActivity;
 import com.example.olesya.boardgames.ui.view.ScreenActivity;
 
@@ -27,6 +27,10 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 public class MenuViewModel extends ViewModel {
+
+
+    public static int PERMISSIONS_REQUEST_CODE_ACCESS_COARSE_LOCATION = 1001;
+    public static String DB_PERSEPHONE = "Persephone";
 
     private MenuModel model;
     private View dialogView;
@@ -44,15 +48,15 @@ public class MenuViewModel extends ViewModel {
     }
 
     private void startGame(Context context, String username, int gameMode, int playerNum, int ptsToWin) {
-        if (gameMode == Utils.GAME_MODE.SCREEN_MODE) {
+        if (gameMode == Commands.GAME_MODE.SCREEN_MODE) {
             Intent intent = new Intent(context, ScreenActivity.class);
-            intent.putExtra(Utils.CLIENT_NUM, 1);
-            intent.putExtra(Utils.WIN_PTS, ptsToWin);
+            intent.putExtra(Commands.CLIENT_NUM, 1);
+            intent.putExtra(Commands.WIN_PTS, ptsToWin);
             context.startActivity(intent);
-        } else if (gameMode == Utils.GAME_MODE.CARD_MODE) {
+        } else if (gameMode == Commands.GAME_MODE.CARD_MODE) {
             Intent intent = new Intent(context, CardActivity.class);
-            intent.putExtra(Utils.CLIENT_CONFIG.HOST_CONFIG, model.getHostAddress());
-            intent.putExtra(Utils.CLIENT_CONFIG.USERNAME, username);
+            intent.putExtra(Commands.CLIENT_CONFIG.HOST_CONFIG, model.getHostAddress());
+            intent.putExtra(Commands.CLIENT_CONFIG.USERNAME, username);
             context.startActivity(intent);
         } else {
             Toast.makeText(context, "choosen wrong mode", Toast.LENGTH_SHORT).show();
@@ -61,8 +65,8 @@ public class MenuViewModel extends ViewModel {
 
     public View.OnClickListener getOnSearchClickListener(Activity context, MenuFragment fragment) {
         return v -> {
-            if (!Utils.isWifiEnabled(context)) {
-                Utils.showAlert(context, context.getString(R.string.wifi_disabled_retry));
+            if (!Utils.Companion.isWifiEnabled(context)) {
+                Utils.Companion.showAlert(context, context.getString(R.string.wifi_disabled_retry));
                 return;
             }
 
@@ -76,7 +80,7 @@ public class MenuViewModel extends ViewModel {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                     && context.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 fragment.requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
-                        Utils.PERMISSIONS_REQUEST_CODE_ACCESS_COARSE_LOCATION);
+                        PERMISSIONS_REQUEST_CODE_ACCESS_COARSE_LOCATION);
             } else {
                 model.discoverPeers();
             }
@@ -125,7 +129,7 @@ public class MenuViewModel extends ViewModel {
                                                         TextView players, TextView pts) {
         return v -> {
             int mode = switcher.isChecked() ?
-                    Utils.GAME_MODE.SCREEN_MODE : Utils.GAME_MODE.CARD_MODE;
+                    Commands.GAME_MODE.SCREEN_MODE : Commands.GAME_MODE.CARD_MODE;
             int personsNum = Integer.valueOf(players.getText().toString());
             if (personsNum > 5 || personsNum < 2) {
                 Toast.makeText(v.getContext(), R.string.err_persons_num, Toast.LENGTH_SHORT).show();

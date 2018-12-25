@@ -1,11 +1,11 @@
-package com.example.olesya.boardgames.connection
+package com.example.olesya.boardgames.connection.server
 
 import android.content.Intent
 import android.util.Log
-import com.example.olesya.boardgames.Utils
+import com.example.olesya.boardgames.Commands
+import com.example.olesya.boardgames.connection.common.BoundService
 import com.example.olesya.boardgames.entity.GameController
 import com.example.olesya.boardgames.entity.Player
-import com.example.olesya.boardgames.interfaces.ServerCallback
 import java.net.ServerSocket
 
 /**
@@ -26,8 +26,8 @@ class Server : BoundService(), ServerCallback {
         if (intent?.extras == null)
             return super.onStartCommand(intent, flags, startId)
 
-        val totalPlayerNum = intent.extras.getInt(Utils.CLIENT_NUM)
-        val winPts = intent.extras.getInt(Utils.WIN_PTS)
+        val totalPlayerNum = intent.extras.getInt(Commands.CLIENT_NUM)
+        val winPts = intent.extras.getInt(Commands.WIN_PTS)
         initController(totalPlayerNum, winPts)
         return super.onStartCommand(intent, flags, startId)
     }
@@ -45,7 +45,7 @@ class Server : BoundService(), ServerCallback {
 //            }
 
             gameController.players = players
-            sendMessageToAll(Utils.CLIENT_COMMANDS.GAME_START)
+            sendMessageToAll(Commands.CLIENT_COMMANDS.GAME_START)
             gameController.startGame()
         }.start()
     }
@@ -84,6 +84,6 @@ class Server : BoundService(), ServerCallback {
      * Отправляет сообщение пользователю
      */
     override fun sendMessageTo(senderId: String, tag: String, msg: String) {
-        sendMessageTo(senderId, tag + Utils.DELIM + msg)
+        sendMessageTo(senderId, tag + Commands.DELIM + msg)
     }
 }

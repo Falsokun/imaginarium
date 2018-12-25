@@ -1,4 +1,4 @@
-package com.example.olesya.boardgames.connection;
+package com.example.olesya.boardgames.connection.common;
 
 import android.arch.lifecycle.MutableLiveData;
 import android.content.ComponentName;
@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import com.example.olesya.boardgames.Utils;
+import com.example.olesya.boardgames.connection.client.ClientService;
 
 public abstract class ServiceHolderActivity extends AppCompatActivity {
 
@@ -26,7 +27,7 @@ public abstract class ServiceHolderActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initServiceConnection();
-        serviceMessage.observe(this, v -> Utils.showAlert(this, serviceMessage.getValue()));
+        serviceMessage.observe(this, v -> Utils.Companion.showAlert(this, serviceMessage.getValue()));
         serverMessage.observe(this, v -> ((ClientService) mService).onUserAction(v));
     }
 

@@ -1,10 +1,12 @@
-package com.example.olesya.boardgames.connection
+package com.example.olesya.boardgames.connection.client
 
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
+import com.example.olesya.boardgames.Commands
 import com.example.olesya.boardgames.R
 import com.example.olesya.boardgames.Utils
+import com.example.olesya.boardgames.connection.common.BoundService
 import com.example.olesya.boardgames.interfaces.ClientCallback
 import java.io.PrintWriter
 import java.net.InetAddress
@@ -31,12 +33,12 @@ class ClientService : BoundService() {
     }
 
     private fun checkConnectionConfig(intent: Intent?) {
-        val inetAddress = intent?.extras?.getSerializable(Utils.CLIENT_CONFIG.HOST_CONFIG) as InetAddress
+        val inetAddress = intent?.extras?.getSerializable(Commands.CLIENT_CONFIG.HOST_CONFIG) as InetAddress
         Thread {
             host = inetAddress.hostName
         }.start()
 
-        username = intent.extras.getString(Utils.CLIENT_CONFIG.USERNAME)
+        username = intent.extras.getString(Commands.CLIENT_CONFIG.USERNAME)
     }
 
     fun start() {
@@ -58,7 +60,7 @@ class ClientService : BoundService() {
         while (true) {
             if (inMessage.hasNext()) {
                 val serverMsg = inMessage.nextLine()
-                if (serverMsg.equals(Utils.CLIENT_CONFIG.END_MSG, ignoreCase = true)) {
+                if (serverMsg.equals(Commands.CLIENT_CONFIG.END_MSG, ignoreCase = true)) {
                     serviceMessage.postValue(resources.getString(R.string.lost_server))
                     break
                 }
@@ -96,7 +98,7 @@ class ClientService : BoundService() {
 
     override fun onDestroy() {
         super.onDestroy()
-        stopWithMessage(Utils.CLIENT_CONFIG.END_MSG)
+        stopWithMessage(Commands.CLIENT_CONFIG.END_MSG)
     }
 
     private fun stopWithMessage(endMsg: String) {
@@ -108,21 +110,23 @@ class ClientService : BoundService() {
 
     private fun handleServerMessage(serverMsg: String) {
         Log.d("Server", "get from server $serverMsg")
-        val action = serverMsg.split(Utils.DELIM.toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()[0]
-        when (action) {
+        val action = serverMsg.split(Commands.DELIM.toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()[0]
+        callback?.showMessage(action)
+//        when (action) {
             //ведущий
-            Utils.CLIENT_COMMANDS.CLIENT_MAIN_TURN -> callback?.onMainTurnEvent()
-            Utils.CLIENT_COMMANDS.CLIENT_MAIN_STOP -> callback?.onMainStopRoundEvent()
-            Utils.CLIENT_COMMANDS.CLIENT_USER_TURN -> callback?.onUserTurnEvent()
-            Utils.CLIENT_COMMANDS.CLIENT_USER_CHOOSE -> {
-                val choice = Integer.valueOf(serverMsg.split(Utils.DELIM.toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()[1])
-                callback?.onUserChooseEvent(choice)
-            }
-            Utils.CLIENT_COMMANDS.CLIENT_GET -> {
-                val card = serverMsg.split(Utils.DELIM.toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()[1]
-                callback?.addCardCallback(card)
-            }
-            Utils.CLIENT_CONFIG.USERNAME_CHANGED -> username = serverMsg.split(Utils.DELIM.toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()[1]
-        }
+//            Utils.CLIENT_COMMANDS.CLIENT_MAIN_TURN -> callback?.onMainTurnEvent()
+//            Utils.CLIENT_COMMANDS.CLIENT_MAIN_STOP -> callback?.onMainStopRoundEvent()
+//            Utils.CLIENT_COMMANDS.CLIENT_USER_TURN -> callback?.onUserTurnEvent()
+//            Utils.CLIENT_COMMANDS.CLIENT_USER_CHOOSE -> {
+//                val choice = Integer.valueOf(serverMsg.split(Utils.DELIM.toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()[1])
+//                callback?.onUserChooseEvent(choice)
+//            }
+//            Utils.CLIENT_COMMANDS.CLIENT_GET -> {
+//                val card = serverMsg.split(Utils.DELIM.toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()[1]
+//                callback?.addCardCallback(card)
+//            }
+//            Utils.CLIENT_CONFIG.USERNAME_CHANGED -> username = serverMsg.split(Utils.DELIM.toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()[1]
+
+//        }
     }
 }

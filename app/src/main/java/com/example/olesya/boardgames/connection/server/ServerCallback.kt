@@ -1,4 +1,4 @@
-package com.example.olesya.boardgames.interfaces
+package com.example.olesya.boardgames.connection.server
 
 interface ServerCallback {
 

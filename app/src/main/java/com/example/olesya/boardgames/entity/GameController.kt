@@ -4,9 +4,9 @@ import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.content.Context
-import com.example.olesya.boardgames.Utils
+import com.example.olesya.boardgames.Commands
+import com.example.olesya.boardgames.connection.server.ServerCallback
 import com.example.olesya.boardgames.interfaces.ScreenCallback
-import com.example.olesya.boardgames.interfaces.ServerCallback
 
 /**
  * Players with their cards and scores
@@ -77,7 +77,7 @@ constructor(context: Context, var players: MutableList<Player> = mutableListOf()
     override fun onShuffleEnd() {
         //TODO: при подписке в адаптере при смене видимости должно будет все перевернуться само
         screenCards.value?.forEach { it -> it.isVisible.onNext(true) }
-        step.value = Utils.CLIENT_COMMANDS.CLIENT_USER_CHOOSE
+        step.value = Commands.CLIENT_COMMANDS.CLIENT_USER_CHOOSE
     }
 
     /**
@@ -112,7 +112,7 @@ constructor(context: Context, var players: MutableList<Player> = mutableListOf()
                 //TODO: diff util
                 if (cards != null) {
                     for (card in cards) {
-                        sender.sendMessageTo(player.username, Utils.CLIENT_COMMANDS.CLIENT_GET, card.img)
+                        sender.sendMessageTo(player.username, Commands.CLIENT_COMMANDS.CLIENT_GET, card.img)
                     }
                 }
             }
@@ -131,7 +131,7 @@ constructor(context: Context, var players: MutableList<Player> = mutableListOf()
         val player = players.find { player -> player.username == username }
         val cards = mutableListOf<Card>()
         //no empty in any way
-        for (i in 0..Utils.DEFAULT_CARDS_NUM)
+        for (i in 0..Commands.DEFAULT_CARDS_NUM)
             deck.getRandomCard()?.let {
                 cards.add(it)
             }
@@ -159,6 +159,6 @@ constructor(context: Context, var players: MutableList<Player> = mutableListOf()
     private fun setNextLeader() {
         leaderPosition = (leaderPosition + 1) % players.size
         val client = players[leaderPosition]
-        sender.sendMessageTo(client.username, Utils.CLIENT_COMMANDS.CLIENT_MAIN_TURN)
+        sender.sendMessageTo(client.username, Commands.CLIENT_COMMANDS.CLIENT_MAIN_TURN)
     }
 }
