@@ -6,6 +6,7 @@ import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import com.example.olesya.boardgames.Commands
 import com.example.olesya.boardgames.R
 import com.example.olesya.boardgames.Utils
@@ -41,11 +42,12 @@ class ScreenActivity : ServiceHolderActivity() {
             }
         })
         //TODO: если аргумент лямбда выражения не используется, то в фигурных скобках можно его не писать
-        mBinding.buttonSend.setOnClickListener { serviceMessage.postValue("anything") }
+        mBinding.buttonSend.setOnClickListener { serverMessage.postValue("anything") }
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.d("server", "close service on destroy")
         stopService(mServiceIntent)
     }
 

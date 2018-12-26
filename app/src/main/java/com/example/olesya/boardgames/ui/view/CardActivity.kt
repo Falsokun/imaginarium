@@ -6,12 +6,12 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.widget.NumberPicker
 import com.example.olesya.boardgames.Commands
 import com.example.olesya.boardgames.R
+import com.example.olesya.boardgames.Utils
 import com.example.olesya.boardgames.adapter.CardPagerAdapter
 import com.example.olesya.boardgames.connection.client.ClientService
 import com.example.olesya.boardgames.connection.common.ServiceHolderActivity
@@ -28,13 +28,13 @@ class CardActivity : ServiceHolderActivity() {
     private val itemTouchCallback: ItemTouchCallback = ItemTouchCallback(mAdapter)
     lateinit var mViewModel: CardViewModel
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_card_imaginarium)
         mViewModel = ViewModelProviders.of(this).get(CardViewModel::class.java)
         initClientService(intent)
         initListeners()
         initCardPager()
-        super.onCreate(savedInstanceState, persistentState)
     }
 
     private fun initCardPager() {
@@ -72,7 +72,19 @@ class CardActivity : ServiceHolderActivity() {
             }
         })
 
+        mViewModel.message.observe(this, Observer {
+            run {
+                if (it == null)
+                    return@run
+
+                Utils.showSnackbar(mBinding.root, it)
+            }
+        })
+
         mViewModel.choosing.observe(this, Observer {
+            if (it != true)
+                return@Observer
+
             run {
                 val dialogView = layoutInflater.inflate(R.layout.dialog_number_picker, null)
                 val np = dialogView.findViewById<NumberPicker>(R.id.numberPicker)

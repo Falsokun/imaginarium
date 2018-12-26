@@ -5,10 +5,11 @@ import android.os.IBinder
 import android.util.Log
 import com.example.olesya.boardgames.Commands
 import com.example.olesya.boardgames.R
-import com.example.olesya.boardgames.Utils
 import com.example.olesya.boardgames.connection.common.BoundService
 import com.example.olesya.boardgames.interfaces.ClientCallback
+import java.io.IOException
 import java.io.PrintWriter
+import java.io.Serializable
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Socket
@@ -28,12 +29,16 @@ class ClientService : BoundService() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d("client", "on start client")
         checkConnectionConfig(intent)
-        return super.onStartCommand(intent, flags, startId)
+        return START_NOT_STICKY
     }
 
     private fun checkConnectionConfig(intent: Intent?) {
-        val inetAddress = intent?.extras?.getSerializable(Commands.CLIENT_CONFIG.HOST_CONFIG) as InetAddress
+        val inetVar: Serializable? = intent?.extras?.getSerializable(Commands.CLIENT_CONFIG.HOST_CONFIG)
+                ?: return
+
+        val inetAddress = inetVar as InetAddress
         Thread {
             host = inetAddress.hostName
         }.start()
@@ -43,10 +48,15 @@ class ClientService : BoundService() {
 
     fun start() {
         Thread {
-            if (host.isEmpty() || username.isEmpty())
+            if (host.isEmpty() || username.isEmpty()) {
+                callback?.showMessage("host and username are not available")
+                return@Thread
+            }
+
+            val connectionSuccessful = openConnection()
+            if (!connectionSuccessful)
                 return@Thread
 
-            openConnection()
             sendMessage(username)
             startHandlingEvents()
         }.start()
@@ -58,15 +68,20 @@ class ClientService : BoundService() {
         }
 
         while (true) {
-            if (inMessage.hasNext()) {
-                val serverMsg = inMessage.nextLine()
-                if (serverMsg.equals(Commands.CLIENT_CONFIG.END_MSG, ignoreCase = true)) {
-                    serviceMessage.postValue(resources.getString(R.string.lost_server))
-                    break
+            try {
+                if (inMessage.hasNext()) {
+                    val serverMsg = inMessage.nextLine()
+                    if (serverMsg.equals(Commands.CLIENT_CONFIG.END_MSG, ignoreCase = true)) {
+                        serviceMessage.postValue(resources.getString(R.string.lost_server))
+                        break
+                    }
+
+                    handleServerMessage(serverMsg)
                 }
 
-                handleServerMessage(serverMsg)
                 Thread.sleep(100)
+            } catch (ex: Throwable) {
+                ex.printStackTrace()
             }
         }
     }
@@ -76,20 +91,32 @@ class ClientService : BoundService() {
             return
         }
 
-        serverStream.println(str)
+        try {
+            serverStream.println(str)
+            serverStream.flush()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
     }
 
-    private fun openConnection() {
+    private fun openConnection(): Boolean {
         if (socketCl.isClosed || socketCl.isConnected) {
             socketCl = Socket()
         }
 
-        socketCl.reuseAddress = true
-        socketCl.bind(null)
-        socketCl.connect(InetSocketAddress(host, PORT_NUMBER))
+        try {
+            socketCl.reuseAddress = true
+            socketCl.bind(null)
+            socketCl.connect(InetSocketAddress(host, PORT_NUMBER))
 
-        serverStream = PrintWriter(socketCl.getOutputStream())
-        inMessage = Scanner(socketCl.getInputStream())
+            serverStream = PrintWriter(socketCl.getOutputStream())
+            inMessage = Scanner(socketCl.getInputStream())
+            return true
+        } catch (ex: IOException) {
+            serviceMessage.postValue("problems with socket")
+        }
+
+        return false
     }
 
     fun onUserAction(message: String) {
@@ -97,8 +124,9 @@ class ClientService : BoundService() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
         stopWithMessage(Commands.CLIENT_CONFIG.END_MSG)
+        socketCl.close()
+        super.onDestroy()
     }
 
     private fun stopWithMessage(endMsg: String) {
@@ -110,23 +138,14 @@ class ClientService : BoundService() {
 
     private fun handleServerMessage(serverMsg: String) {
         Log.d("Server", "get from server $serverMsg")
-        val action = serverMsg.split(Commands.DELIM.toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()[0]
+        val action = serverMsg.split(Commands.DELIM)[0]
         callback?.showMessage(action)
-//        when (action) {
-            //ведущий
-//            Utils.CLIENT_COMMANDS.CLIENT_MAIN_TURN -> callback?.onMainTurnEvent()
-//            Utils.CLIENT_COMMANDS.CLIENT_MAIN_STOP -> callback?.onMainStopRoundEvent()
-//            Utils.CLIENT_COMMANDS.CLIENT_USER_TURN -> callback?.onUserTurnEvent()
-//            Utils.CLIENT_COMMANDS.CLIENT_USER_CHOOSE -> {
-//                val choice = Integer.valueOf(serverMsg.split(Utils.DELIM.toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()[1])
-//                callback?.onUserChooseEvent(choice)
-//            }
-//            Utils.CLIENT_COMMANDS.CLIENT_GET -> {
-//                val card = serverMsg.split(Utils.DELIM.toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()[1]
-//                callback?.addCardCallback(card)
-//            }
-//            Utils.CLIENT_CONFIG.USERNAME_CHANGED -> username = serverMsg.split(Utils.DELIM.toRegex()).dropLastWhile({ it.isEmpty() }).toTypedArray()[1]
 
-//        }
+        when (action) {
+            Commands.CLIENT_COMMANDS.CLIENT_GET -> callback?.addCardCallback(serverMsg.split(Commands.DELIM)[1])
+            Commands.CLIENT_COMMANDS.CLIENT_TURN -> callback?.userChoosingEnabled(serverMsg.split(Commands.DELIM)[1] == "1")
+            Commands.CLIENT_COMMANDS.CLIENT_CHOOSE -> callback?.userChoosingEnabled(serverMsg.split(Commands.DELIM)[1] == "1")
+            else -> callback?.showMessage(serverMsg)
+        }
     }
 }

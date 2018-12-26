@@ -24,7 +24,7 @@ class SplashActivity : AppCompatActivity() {
                 .addOnCompleteListener { task ->
                     run {
                         if (task.isSuccessful) {
-                            for (document: QueryDocumentSnapshot in task.result) {
+                            for (document: QueryDocumentSnapshot in task.result!!) {
                                 holders.add(ImageHolder(document.data["img"] as String))
                             }
                         } else {

@@ -7,9 +7,9 @@ interface ScreenCallback {
 
     fun onStartNewRound()
 
-    fun onShuffleEnd()
-
     fun stopRound()
+
+    fun onShuffleEnd()
 
     fun onAddUserEvent(username: String, renamedFrom: String): Player
 

@@ -31,12 +31,14 @@ object Commands {
 
     object CLIENT_COMMANDS {
         const val CLIENT_GET = "CLIENT_GET"
+        const val CLIENT_TURN = "CLIENT_USER_TURN"
+        const val CLIENT_CHOOSE = "CLIENT_CHOOSE"
+
+
         const val CLIENT_WAIT = "CLIENT_WAIT"
         const val GAME_START = "GAME_START"
         const val CLIENT_MAIN_FINISHED = "CLIENT_MAIN_FIN"
         const val CLIENT_MAIN_TURN = "CLIENT_MAIN_TURN"
-        const val CLIENT_USER_FINISHED = "CLIENT_USER_FIN"
-        const val CLIENT_USER_TURN = "CLIENT_USER_TURN"
         const val CLIENT_MAIN_STOP = "CLIENT_MAIN_STOP"
         const val CLIENT_MAIN_STOP_FINISHED = "CLIENT_MAIN_STOP_FINISHED"
         const val CLIENT_USER_CHOOSE = "CLIENT_USER_CHOOSE"

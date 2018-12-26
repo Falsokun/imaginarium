@@ -4,29 +4,27 @@ import android.util.Log
 import com.example.olesya.boardgames.Commands
 import com.example.olesya.boardgames.entity.GameController
 import com.example.olesya.boardgames.entity.Player
+import java.io.BufferedReader
+import java.io.InputStreamReader
 import java.io.PrintWriter
 import java.net.Socket
-import java.util.*
 
 class CardHandler(socket: Socket, var gameController: GameController) : Runnable {
 
     private val outMessage = PrintWriter(socket.getOutputStream())
-    private val inMessage = Scanner(socket.getInputStream())
+    private val inMessage = BufferedReader(InputStreamReader(socket.getInputStream()))
     val player = Player()
 
     override fun run() {
         acceptUserEvent()
-
-        while (true) {
-            if (inMessage.hasNext()) {
-                val clientMessage = inMessage.nextLine()
-                handleClientMessage(clientMessage)
-                if (clientMessage.toUpperCase() == Commands.CLIENT_CONFIG.END_MSG) {
-                    break
-                }
+        var clientMessage: String? = inMessage.readLine()
+        while (clientMessage != null) {
+            handleClientMessage(clientMessage)
+            if (clientMessage.toUpperCase() == Commands.CLIENT_CONFIG.END_MSG) {
+                break
             }
 
-            Thread.sleep(100)
+            clientMessage = inMessage.readLine()
         }
     }
 
@@ -34,18 +32,12 @@ class CardHandler(socket: Socket, var gameController: GameController) : Runnable
      * Accept user and check for username
      */
     private fun acceptUserEvent() {
-        val username = inMessage.nextLine()
-        //TODO:
-        //        if (!clientName.equals(username)) {
-        //            sendMsg(Utils.CLIENT_CONFIG.USERNAME_CHANGED + Utils.DELIM + clientName);
-        //        }
-
+        val username = inMessage.readLine()
         gameController.onAddUserEvent(username, username)
     }
 
     private fun handleClientMessage(clientMessage: String) {
         Log.d("Server", clientMessage)
-
         val action = clientMessage.split("#".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
         //        String card;
         //        switch (action) {
@@ -78,7 +70,6 @@ class CardHandler(socket: Socket, var gameController: GameController) : Runnable
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
-
     }
 
 }

@@ -7,6 +7,7 @@ import com.example.olesya.boardgames.connection.common.BoundService
 import com.example.olesya.boardgames.entity.GameController
 import com.example.olesya.boardgames.entity.Player
 import java.net.ServerSocket
+import java.net.SocketException
 
 /**
  * Отвечает только за подключение пользователей и передачу сообщений
@@ -15,21 +16,23 @@ class Server : BoundService(), ServerCallback {
 
     lateinit var gameController: GameController
 
-    private val serverSocket: ServerSocket = ServerSocket(PORT_NUMBER)
+    private var serverSocket: ServerSocket = ServerSocket(PORT_NUMBER)
 
     private val clients: MutableList<CardHandler> = mutableListOf()
+
+    private lateinit var connectionController: Thread
 
     /**
      * Initializes searching game: opens server socket, waits for all users, sets the turn of user
      */
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent?.extras == null)
-            return super.onStartCommand(intent, flags, startId)
+            return START_NOT_STICKY
 
         val totalPlayerNum = intent.extras.getInt(Commands.CLIENT_NUM)
         val winPts = intent.extras.getInt(Commands.WIN_PTS)
         initController(totalPlayerNum, winPts)
-        return super.onStartCommand(intent, flags, startId)
+        return START_NOT_STICKY
     }
 
     /**
@@ -38,22 +41,32 @@ class Server : BoundService(), ServerCallback {
     private fun initController(totalPlayerNum: Int, winPts: Int) {
         gameController = GameController(this, mutableListOf(), winPts, this)
 
-        Thread {
+        connectionController = Thread(Runnable {
             val players = mutableListOf<Player>()
-//            for (i in 0..totalPlayerNum) {
-            openConnection(serverSocket)?.let { players.add(it) }
-//            }
+            try {
+//                for (i in 0..totalPlayerNum) {
+                    openConnection()?.let { players.add(it) }
+//                }
 
-            gameController.players = players
-            sendMessageToAll(Commands.CLIENT_COMMANDS.GAME_START)
-            gameController.startGame()
-        }.start()
+                gameController.players = players
+                sendMessageToAll(Commands.CLIENT_COMMANDS.GAME_START)
+                gameController.startGame()
+            } catch (ex: SocketException) {
+                Log.d("server", "closed")
+            }
+        })
+
+        connectionController.start()
     }
 
     /**
      * Открывает соединение с клиентом
      */
-    private fun openConnection(serverSocket: ServerSocket): Player? {
+    private fun openConnection(): Player? {
+        if (serverSocket.isClosed)
+            return null
+//            serverSocket = ServerSocket(PORT_NUMBER)
+
         val clientSocket = serverSocket.accept()
         val client = CardHandler(clientSocket, gameController)
         clients.add(client)
@@ -85,5 +98,11 @@ class Server : BoundService(), ServerCallback {
      */
     override fun sendMessageTo(senderId: String, tag: String, msg: String) {
         sendMessageTo(senderId, tag + Commands.DELIM + msg)
+    }
+
+    override fun onDestroy() {
+        connectionController.interrupt()
+        serverSocket.close()
+        super.onDestroy()
     }
 }

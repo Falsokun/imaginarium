@@ -11,7 +11,6 @@ import com.example.olesya.boardgames.interfaces.ScreenCallback
 /**
  * Players with their cards and scores
  */
-//TODO: может быть тогда сделать LiveData для Player компонент? Клиент на них подписывается и вуаля
 class GameController
 constructor(context: Context, var players: MutableList<Player> = mutableListOf(), val winPts: Int, val sender: ServerCallback) : ScreenCallback {
 
@@ -34,20 +33,7 @@ constructor(context: Context, var players: MutableList<Player> = mutableListOf()
         screenCards.value = ArrayList()
         //TODO:!!!
         step.value = "init"
-//        test()
     }
-
-//    private fun test() {
-//        val cards = mutableListOf<ImaginariumCard>()
-//        for (i in 0..5) {
-//            //TODO:!!!
-//            val card = ImaginariumCard(deck.getRandomCard()!!)
-//            card.isVisible.onNext(true)
-//            cards.add(card)
-//        }
-//
-//        screenCards.postValue(cards)
-//    }
 
     fun addCard(card: ImaginariumCard) {
         val cur = screenCards.value
@@ -118,7 +104,6 @@ constructor(context: Context, var players: MutableList<Player> = mutableListOf()
             }
         })
 
-        players.add(player)
         return player
     }
 

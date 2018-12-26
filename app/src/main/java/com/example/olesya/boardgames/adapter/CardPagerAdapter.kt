@@ -13,7 +13,6 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.olesya.boardgames.R
 import com.example.olesya.boardgames.databinding.LayoutCardBinding
 import com.example.olesya.boardgames.entity.Card
-import com.google.android.gms.common.util.CollectionUtils.mutableListOf
 
 
 class CardPagerAdapter : RecyclerView.Adapter<CardPagerAdapter.Holder>() {

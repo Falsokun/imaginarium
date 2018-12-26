@@ -1,6 +1,5 @@
 package com.example.olesya.boardgames.ui.main
 
-import android.arch.lifecycle.ViewModelProviders
 import android.content.pm.PackageManager
 import android.databinding.DataBindingUtil
 import android.os.Bundle
@@ -20,7 +19,7 @@ class MenuFragment: Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_menu, container, false)
-        mViewModel = ViewModelProviders.of(this).get(MenuViewModel::class.java)
+        mViewModel = MenuViewModel(this)
         initListeners()
         (activity as AppCompatActivity).supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         return mBinding.root
