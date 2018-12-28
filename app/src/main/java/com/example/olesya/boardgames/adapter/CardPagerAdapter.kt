@@ -47,7 +47,7 @@ class CardPagerAdapter : RecyclerView.Adapter<CardPagerAdapter.Holder>() {
     fun <T : Card> setData(cards: MutableList<T>) {
         dataset.clear()
         dataset.addAll(cards)
-        notifyItemRangeInserted(0, dataset.size)
+        notifyDataSetChanged()
     }
 
     fun add(card: Card) {
