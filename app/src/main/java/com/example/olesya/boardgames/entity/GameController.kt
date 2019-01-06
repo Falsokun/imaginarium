@@ -6,17 +6,21 @@ import android.arch.lifecycle.Observer
 import android.content.Context
 import com.example.olesya.boardgames.Commands
 import com.example.olesya.boardgames.connection.server.ServerCallback
-import com.example.olesya.boardgames.interfaces.ScreenCallback
 
 /**
  * Players with their cards and scores
  */
-class GameController
-constructor(context: Context, var players: MutableList<Player> = mutableListOf(), val winPts: Int, val sender: ServerCallback) : ScreenCallback {
+abstract class GameController constructor(context: Context,
+                                      var players: MutableList<Player> = mutableListOf(),
+                                      val winPts: Int,
+                                      val sender: ServerCallback
+) {
 
     var deck: Deck = Deck(context)
 
     var screenCards: MutableLiveData<MutableList<ImaginariumCard>> = MutableLiveData()
+
+    var screenMessage: MutableLiveData<String> = MutableLiveData()
 
     var round: Int = 1
 
@@ -35,6 +39,8 @@ constructor(context: Context, var players: MutableList<Player> = mutableListOf()
         step.value = "init"
     }
 
+    abstract fun clientPicksCard(username: String, card: String)
+
     fun addCard(card: ImaginariumCard) {
         val cur = screenCards.value
         //won't be null if null arraylist won't be explicitly set to screencards
@@ -51,44 +57,7 @@ constructor(context: Context, var players: MutableList<Player> = mutableListOf()
         return players.size == screenCards.value?.size
     }
 
-    override fun onStartNewRound() {
-        round = 2
-        screenCards.postValue(ArrayList())
-    }
-
-    /**
-     * Fired after shuffle ends;
-     * Reveals cards and starts choosing step
-     */
-    override fun onShuffleEnd() {
-        //TODO: при подписке в адаптере при смене видимости должно будет все перевернуться само
-        screenCards.value?.forEach { it -> it.isVisible.onNext(true) }
-        step.value = Commands.CLIENT_COMMANDS.CLIENT_USER_CHOOSE
-    }
-
-    /**
-     *
-     */
-    //TODO: не понимаю почему у меня выдаются карты в стоп раунд, так никто не делает /недовольство/
-    override fun stopRound() {
-        if (deck.cardsLeft() < players.size && deck.cardsLeft() % players.size != 0)
-            return
-
-        players.forEach { player ->
-            //TODO: run вроде как просто вызывает блок, ну то есть обычный foreach
-            run {
-                val cur = player.cards.value
-                val card = deck.getRandomCard()
-                if (card != null) {
-                    cur?.add(card)
-                }
-
-                player.cards.postValue(cur)
-            }
-        }
-    }
-
-    override fun onAddUserEvent(username: String, renamedFrom: String): Player {
+    fun onAddUserEvent(username: String, renamedFrom: String): Player {
         val player = players.find { x -> x.username == renamedFrom }
         //PLAYER ALWAYS NOT NULL
         player!!.username = username
@@ -107,12 +76,7 @@ constructor(context: Context, var players: MutableList<Player> = mutableListOf()
         return player
     }
 
-    override fun onRemoveUserEvent(username: String) {
-        //TODO: remove
-//        players.removeIf { player -> player.username == clientName }
-    }
-
-    override fun initHand(username: String) {
+    fun initHand(username: String) {
         val player = players.find { player -> player.username == username }
         val cards = mutableListOf<Card>()
         //no empty in any way
@@ -125,13 +89,12 @@ constructor(context: Context, var players: MutableList<Player> = mutableListOf()
         player?.cards?.postValue(cards as ArrayList<Card>?)
     }
 
-    fun startGame() {
+    open fun startGame() {
+        leaderPosition = 0
         choosePlayerOrder()
         for (player in players) {
             initHand(player.username)
         }
-
-        setNextLeader()
     }
 
     private fun choosePlayerOrder() {
@@ -144,6 +107,12 @@ constructor(context: Context, var players: MutableList<Player> = mutableListOf()
     private fun setNextLeader() {
         leaderPosition = (leaderPosition + 1) % players.size
         val client = players[leaderPosition]
-        sender.sendMessageTo(client.username, Commands.CLIENT_COMMANDS.CLIENT_MAIN_TURN)
+        sender.sendMessageTo(client.username, Commands.CLIENT_COMMANDS.CLIENT_TURN)
     }
+
+    fun getLeader(): Player {
+        return players[leaderPosition]
+    }
+
+    abstract fun clientChoosesCard(username: String, choosedCard: String)
 }

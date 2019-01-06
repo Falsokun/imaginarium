@@ -10,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.widget.NumberPicker
 import com.example.olesya.boardgames.Commands
+import com.example.olesya.boardgames.Commands.DELIM
 import com.example.olesya.boardgames.R
 import com.example.olesya.boardgames.Utils
 import com.example.olesya.boardgames.adapter.CardPagerAdapter
@@ -25,7 +26,7 @@ class CardActivity : ServiceHolderActivity() {
 
     private lateinit var mBinding: ActivityCardImaginariumBinding
     private val mAdapter: CardPagerAdapter = CardPagerAdapter()
-    private val itemTouchCallback: ItemTouchCallback = ItemTouchCallback(mAdapter)
+    private val itemTouchCallback: ItemTouchCallback = ItemTouchCallback()
     lateinit var mViewModel: CardViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,27 +50,29 @@ class CardActivity : ServiceHolderActivity() {
     }
 
     private fun initListeners() {
+        itemTouchCallback.pickedData.observe(this, Observer {
+            if (it != null) {
+                val card = mAdapter.dataset[it]
+                mAdapter.remove(it)
+                mViewModel.onPicked(it)
+                serverMessage.postValue(Commands.CLIENT_COMMANDS.CLIENT_TURN + DELIM + card.img)
+            }
+        })
+
         mBinding.buttonSend.setOnClickListener {
             val message = mBinding.testMsg.text.toString()
             (service as ClientService).onUserAction(message)
         }
 
         mViewModel.player.cards.observe(this, Observer { cards ->
-            run {
-                //diff util
-                //scroll to position
-                if (cards != null)
-                    mAdapter.setData(cards)
-            }
+            //diff util
+            //scroll to position
+            if (cards != null)
+                mAdapter.setData(cards)
         })
 
         mViewModel.picking.observe(this, Observer { value ->
-            run {
-                value?.let {
-                    itemTouchCallback.isSwipeEnabled = it
-                    itemTouchCallback.runnable = mViewModel::onPicked
-                }
-            }
+            value?.let { itemTouchCallback.isSwipeEnabled = value }
         })
 
         mViewModel.message.observe(this, Observer {
@@ -97,7 +100,7 @@ class CardActivity : ServiceHolderActivity() {
                         .setView(dialogView)
                         .setCancelable(false)
                         .setNeutralButton(R.string.OK) { _, _ ->
-                            serverMessage.postValue(Commands.CLIENT_COMMANDS.CLIENT_USER_CHOOSE_FINISHED
+                            serverMessage.postValue(Commands.CLIENT_COMMANDS.CLIENT_CHOOSE
                                     + Commands.DELIM
                                     + np.value)
                         }.show()

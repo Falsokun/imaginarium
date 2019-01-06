@@ -11,9 +11,6 @@ class Player constructor(var username: String = "player") {
 
     var cards: MutableLiveData<MutableList<Card>> = MutableLiveData()
 
-    //TODO: status
-    var playerStatus: String = ""
-
     init {
         score.postValue(0)
         cards.postValue(ArrayList())

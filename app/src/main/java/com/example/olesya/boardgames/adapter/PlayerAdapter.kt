@@ -22,6 +22,5 @@ class PlayerAdapter : RecyclerView.Adapter<PlayerAdapter.Holder>() {
         holder.mBinding.playerName.text = players[position].username
     }
 
-    //TODO:может еще чо надо?
     class Holder(var mBinding: ItemPlayerStatusBinding) : RecyclerView.ViewHolder(mBinding.root)
 }

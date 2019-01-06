@@ -69,19 +69,17 @@ class ClientService : BoundService() {
 
         while (true) {
             try {
-                if (inMessage.hasNext()) {
-                    val serverMsg = inMessage.nextLine()
-                    if (serverMsg.equals(Commands.CLIENT_CONFIG.END_MSG, ignoreCase = true)) {
-                        serviceMessage.postValue(resources.getString(R.string.lost_server))
-                        break
-                    }
-
-                    handleServerMessage(serverMsg)
+                val serverMsg = inMessage.nextLine()
+                if (serverMsg.equals(Commands.CLIENT_CONFIG.END_MSG, ignoreCase = true)) {
+                    serviceMessage.postValue(resources.getString(R.string.lost_server))
+                    break
                 }
 
-                Thread.sleep(100)
+                handleServerMessage(serverMsg)
             } catch (ex: Throwable) {
                 ex.printStackTrace()
+                serviceMessage.postValue(resources.getString(R.string.lost_server))
+                break
             }
         }
     }
@@ -140,10 +138,9 @@ class ClientService : BoundService() {
         Log.d("Server", "get from server $serverMsg")
         val action = serverMsg.split(Commands.DELIM)[0]
         callback?.showMessage(action)
-
         when (action) {
             Commands.CLIENT_COMMANDS.CLIENT_GET -> callback?.addCardCallback(serverMsg.split(Commands.DELIM)[1])
-            Commands.CLIENT_COMMANDS.CLIENT_TURN -> callback?.userChoosingEnabled(serverMsg.split(Commands.DELIM)[1] == "1")
+            Commands.CLIENT_COMMANDS.CLIENT_TURN -> callback?.userPickingEnabled(true)
             Commands.CLIENT_COMMANDS.CLIENT_CHOOSE -> callback?.userChoosingEnabled(serverMsg.split(Commands.DELIM)[1] == "1")
             else -> callback?.showMessage(serverMsg)
         }

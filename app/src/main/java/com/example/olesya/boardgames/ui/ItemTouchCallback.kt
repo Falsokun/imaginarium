@@ -1,23 +1,18 @@
 package com.example.olesya.boardgames.ui
 
+import android.arch.lifecycle.MutableLiveData
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.helper.ItemTouchHelper
-import com.example.olesya.boardgames.adapter.CardPagerAdapter
 
-class ItemTouchCallback(val adapter: CardPagerAdapter): ItemTouchHelper.Callback() {
+class ItemTouchCallback : ItemTouchHelper.Callback() {
 
-    lateinit var runnable: (position: Int) -> Unit
+    var pickedData: MutableLiveData<Int> = MutableLiveData()
 
-    var isSwipeEnabled: Boolean = false
-
-    override fun isItemViewSwipeEnabled(): Boolean {
-        return isSwipeEnabled
-    }
+    var isSwipeEnabled = false
 
     override fun getMovementFlags(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?): Int {
-        val dragFlags = ItemTouchHelper.START or ItemTouchHelper.END
-        val swipeFlags = ItemTouchHelper.UP
-        return ItemTouchHelper.Callback.makeMovementFlags(dragFlags, swipeFlags)
+        return ItemTouchHelper.Callback.makeMovementFlags(ItemTouchHelper.START or ItemTouchHelper.END,
+                if (isSwipeEnabled) ItemTouchHelper.UP else 0)
     }
 
     override fun onMove(recyclerView: RecyclerView?, viewHolder: RecyclerView.ViewHolder?, target: RecyclerView.ViewHolder?): Boolean {
@@ -26,6 +21,6 @@ class ItemTouchCallback(val adapter: CardPagerAdapter): ItemTouchHelper.Callback
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder?, direction: Int) {
         val position = viewHolder?.adapterPosition ?: return
-        runnable.invoke(position)
+        pickedData.postValue(position)
     }
 }

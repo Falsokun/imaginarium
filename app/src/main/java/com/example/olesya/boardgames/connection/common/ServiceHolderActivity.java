@@ -20,14 +20,14 @@ public abstract class ServiceHolderActivity extends AppCompatActivity {
 
     private ServiceConnection serviceConn;
     private boolean serviceBound = false;
-    public MutableLiveData<String> serviceMessage = new MutableLiveData<>(); //to myself
+    public MutableLiveData<String> screenMessage = new MutableLiveData<>(); //to myself
     public MutableLiveData<String> serverMessage = new MutableLiveData<>(); //p2p
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initServiceConnection();
-        serviceMessage.observe(this, v -> Utils.Companion.showAlert(this, serviceMessage.getValue()));
+        screenMessage.observe(this, v -> Utils.Companion.showAlert(this, screenMessage.getValue()));
         serverMessage.observe(this, v -> ((ClientService) mService).onUserAction(v));
     }
 
@@ -50,7 +50,7 @@ public abstract class ServiceHolderActivity extends AppCompatActivity {
             public void onServiceConnected(ComponentName name, IBinder binder) {
                 mService = ((BoundService.MyBinder) binder).getService();
                 setCallbacks();
-                mService.setServiceMessage(serviceMessage);
+                mService.setServiceMessage(screenMessage);
                 serviceBound = true;
             }
 

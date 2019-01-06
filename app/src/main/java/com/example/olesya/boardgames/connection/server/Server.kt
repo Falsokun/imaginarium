@@ -6,6 +6,7 @@ import com.example.olesya.boardgames.Commands
 import com.example.olesya.boardgames.connection.common.BoundService
 import com.example.olesya.boardgames.entity.GameController
 import com.example.olesya.boardgames.entity.Player
+import com.example.olesya.boardgames.game.controller.ImaginariumController
 import java.net.ServerSocket
 import java.net.SocketException
 
@@ -39,7 +40,7 @@ class Server : BoundService(), ServerCallback {
      * Подключает всех пользователей и запускает игру
      */
     private fun initController(totalPlayerNum: Int, winPts: Int) {
-        gameController = GameController(this, mutableListOf(), winPts, this)
+        gameController = ImaginariumController(this, mutableListOf(), winPts, this)
 
         connectionController = Thread(Runnable {
             val players = mutableListOf<Player>()
@@ -49,7 +50,7 @@ class Server : BoundService(), ServerCallback {
 //                }
 
                 gameController.players = players
-                sendMessageToAll(Commands.CLIENT_COMMANDS.GAME_START)
+                sendMessageToAll("game start")
                 gameController.startGame()
             } catch (ex: SocketException) {
                 Log.d("server", "closed")
@@ -84,20 +85,19 @@ class Server : BoundService(), ServerCallback {
         }
     }
 
-    /**
-     * Отправляет сообщение пользователю
-     */
-    override fun sendMessageTo(senderId: String, msg: String) {
-        val client = clients.find { x -> x.player.username == senderId }
-        Log.d("Server", "send to $senderId - $msg")
-        client?.sendMsg(msg)
+    override fun sendMessageExcept(banId: String, tag: String, msg: String) {
+        Log.d("Server", "send except $banId message: $msg")
+        clients.filter { it.player.username != banId }
+                .forEach{it.sendMsg(tag + Commands.DELIM + msg)}
     }
 
     /**
      * Отправляет сообщение пользователю
      */
     override fun sendMessageTo(senderId: String, tag: String, msg: String) {
-        sendMessageTo(senderId, tag + Commands.DELIM + msg)
+        val client = clients.find { x -> x.player.username == senderId }
+        Log.d("Server", "send to $senderId - $msg")
+        client?.sendMsg(tag + Commands.DELIM + msg)
     }
 
     override fun onDestroy() {

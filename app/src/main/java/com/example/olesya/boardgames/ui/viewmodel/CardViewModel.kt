@@ -19,7 +19,7 @@ class CardViewModel: ViewModel(), ClientCallback {
     val playersNumber: Int = 1
 
     override fun addCardCallback(card: String) {
-        player.addCard(ImaginariumCard(card, true))
+        player.addCard(ImaginariumCard(card, true, player.username))
     }
 
     override fun userPickingEnabled(enabled: Boolean) {
@@ -36,5 +36,6 @@ class CardViewModel: ViewModel(), ClientCallback {
 
     fun onPicked(position: Int) {
         player.removeCard(position)
+        picking.postValue(false)
     }
 }

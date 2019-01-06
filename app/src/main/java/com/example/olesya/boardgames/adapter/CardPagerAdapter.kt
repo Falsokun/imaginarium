@@ -55,6 +55,11 @@ class CardPagerAdapter : RecyclerView.Adapter<CardPagerAdapter.Holder>() {
         notifyItemInserted(0)
     }
 
+    fun remove(item: Int) {
+        dataset.removeAt(item)
+        notifyItemRemoved(item)
+    }
+
     inner class Holder(var mBinding: LayoutCardBinding) : RecyclerView.ViewHolder(mBinding.root),
             View.OnLongClickListener {
 

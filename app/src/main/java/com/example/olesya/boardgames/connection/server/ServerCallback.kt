@@ -4,7 +4,7 @@ interface ServerCallback {
 
     fun sendMessageToAll(msg: String)
 
-    fun sendMessageTo(senderId: String, msg: String)
+    fun sendMessageTo(senderId: String, tag: String, msg: String = "")
 
-    fun sendMessageTo(senderId: String, tag: String, msg: String)
+    fun sendMessageExcept(banId: String, tag: String, msg: String = "")
 }
