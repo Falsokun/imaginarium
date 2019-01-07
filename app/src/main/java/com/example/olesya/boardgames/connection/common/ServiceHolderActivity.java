@@ -50,7 +50,7 @@ public abstract class ServiceHolderActivity extends AppCompatActivity {
             public void onServiceConnected(ComponentName name, IBinder binder) {
                 mService = ((BoundService.MyBinder) binder).getService();
                 setCallbacks();
-                mService.setServiceMessage(screenMessage);
+                mService.setScreenMessage(screenMessage);
                 serviceBound = true;
             }
 

@@ -21,7 +21,7 @@ class ClientService : BoundService() {
     var username: String = ""
     var socketCl: Socket = Socket()
     lateinit var serverStream: PrintWriter
-    lateinit var inMessage: Scanner
+    lateinit var inMessage: Scanner //TODO: to buffered reader
     var callback: ClientCallback? = null
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -71,14 +71,18 @@ class ClientService : BoundService() {
             try {
                 val serverMsg = inMessage.nextLine()
                 if (serverMsg.equals(Commands.CLIENT_CONFIG.END_MSG, ignoreCase = true)) {
-                    serviceMessage.postValue(resources.getString(R.string.lost_server))
+                    screenMessage.postValue(resources.getString(R.string.lost_server))
                     break
                 }
 
                 handleServerMessage(serverMsg)
-            } catch (ex: Throwable) {
+            } catch (ex: NoSuchElementException) {
                 ex.printStackTrace()
-                serviceMessage.postValue(resources.getString(R.string.lost_server))
+                screenMessage.postValue(resources.getString(R.string.lost_server))
+                break
+            } catch (ex: IllegalStateException) {
+                ex.printStackTrace()
+                screenMessage.postValue("Lost server")
                 break
             }
         }
@@ -111,7 +115,7 @@ class ClientService : BoundService() {
             inMessage = Scanner(socketCl.getInputStream())
             return true
         } catch (ex: IOException) {
-            serviceMessage.postValue("problems with socket")
+            screenMessage.postValue("problems with socket")
         }
 
         return false
@@ -123,14 +127,16 @@ class ClientService : BoundService() {
 
     override fun onDestroy() {
         stopWithMessage(Commands.CLIENT_CONFIG.END_MSG)
-        socketCl.close()
         super.onDestroy()
     }
 
     private fun stopWithMessage(endMsg: String) {
         Thread {
             sendMessage(endMsg)
+            //TODO: check trycatch
             socketCl.close()
+            inMessage.close()
+            serverStream.close()
         }.start()
     }
 
@@ -141,7 +147,9 @@ class ClientService : BoundService() {
         when (action) {
             Commands.CLIENT_COMMANDS.CLIENT_GET -> callback?.addCardCallback(serverMsg.split(Commands.DELIM)[1])
             Commands.CLIENT_COMMANDS.CLIENT_TURN -> callback?.userPickingEnabled(true)
-            Commands.CLIENT_COMMANDS.CLIENT_CHOOSE -> callback?.userChoosingEnabled(serverMsg.split(Commands.DELIM)[1] == "1")
+            Commands.CLIENT_COMMANDS.CLIENT_CHOOSE -> callback?.userChoosingEnabled(true, Integer.valueOf(serverMsg.split(Commands.DELIM)[1]))
+
+            Commands.CLIENT_CONFIG.USERNAME -> callback?.usernameChanged(serverMsg.split(Commands.DELIM)[1])
             else -> callback?.showMessage(serverMsg)
         }
     }

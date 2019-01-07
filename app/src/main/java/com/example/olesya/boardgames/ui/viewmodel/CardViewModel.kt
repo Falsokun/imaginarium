@@ -8,7 +8,7 @@ import com.example.olesya.boardgames.interfaces.ClientCallback
 
 class CardViewModel: ViewModel(), ClientCallback {
 
-    val player = Player()
+    val player = Player("me")
 
     val choosing = MutableLiveData<Boolean>()
 
@@ -16,7 +16,7 @@ class CardViewModel: ViewModel(), ClientCallback {
 
     val message = MutableLiveData<String>()
 
-    val playersNumber: Int = 1
+    var playersNumber: Int = 1
 
     override fun addCardCallback(card: String) {
         player.addCard(ImaginariumCard(card, true, player.username))
@@ -26,7 +26,8 @@ class CardViewModel: ViewModel(), ClientCallback {
         picking.postValue(enabled)
     }
 
-    override fun userChoosingEnabled(enabled: Boolean) {
+    override fun userChoosingEnabled(enabled: Boolean, fromNum: Int) {
+        playersNumber = fromNum
         choosing.postValue(enabled)
     }
 
@@ -37,5 +38,9 @@ class CardViewModel: ViewModel(), ClientCallback {
     fun onPicked(position: Int) {
         player.removeCard(position)
         picking.postValue(false)
+    }
+
+    override fun usernameChanged(username: String) {
+        player.username = username
     }
 }

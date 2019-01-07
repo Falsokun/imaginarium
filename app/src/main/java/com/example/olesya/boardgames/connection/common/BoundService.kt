@@ -10,7 +10,7 @@ open class BoundService: Service() {
 
     val PORT_NUMBER = 8888
 
-    var serviceMessage: MutableLiveData<String> = MutableLiveData()
+    var screenMessage: MutableLiveData<String> = MutableLiveData()
 
     val binder: MyBinder = MyBinder()
 

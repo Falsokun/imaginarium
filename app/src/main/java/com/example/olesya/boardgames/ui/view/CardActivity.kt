@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.helper.ItemTouchHelper
 import android.widget.NumberPicker
@@ -13,6 +14,7 @@ import com.example.olesya.boardgames.Commands
 import com.example.olesya.boardgames.Commands.DELIM
 import com.example.olesya.boardgames.R
 import com.example.olesya.boardgames.Utils
+import com.example.olesya.boardgames.adapter.CardDiffUtil
 import com.example.olesya.boardgames.adapter.CardPagerAdapter
 import com.example.olesya.boardgames.connection.client.ClientService
 import com.example.olesya.boardgames.connection.common.ServiceHolderActivity
@@ -28,6 +30,7 @@ class CardActivity : ServiceHolderActivity() {
     private val mAdapter: CardPagerAdapter = CardPagerAdapter()
     private val itemTouchCallback: ItemTouchCallback = ItemTouchCallback()
     lateinit var mViewModel: CardViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,10 +68,12 @@ class CardActivity : ServiceHolderActivity() {
         }
 
         mViewModel.player.cards.observe(this, Observer { cards ->
-            //diff util
             //scroll to position
-            if (cards != null)
+            if (cards != null) {
+                val diffResult = DiffUtil.calculateDiff(CardDiffUtil(mAdapter.dataset, cards))
                 mAdapter.setData(cards)
+                diffResult.dispatchUpdatesTo(mAdapter)
+            }
         })
 
         mViewModel.picking.observe(this, Observer { value ->
@@ -88,23 +93,24 @@ class CardActivity : ServiceHolderActivity() {
             if (it != true)
                 return@Observer
 
-            run {
-                val dialogView = layoutInflater.inflate(R.layout.dialog_number_picker, null)
-                val np = dialogView.findViewById<NumberPicker>(R.id.numberPicker)
-                np.maxValue = mViewModel.playersNumber
-                np.minValue = 1
-                np.value = 1
-                np.wrapSelectorWheel = true
-                AlertDialog.Builder(this)
-                        .setTitle(R.string.most_suitable_card)
-                        .setView(dialogView)
-                        .setCancelable(false)
-                        .setNeutralButton(R.string.OK) { _, _ ->
-                            serverMessage.postValue(Commands.CLIENT_COMMANDS.CLIENT_CHOOSE
-                                    + Commands.DELIM
-                                    + np.value)
-                        }.show()
+            val dialogView = layoutInflater.inflate(R.layout.dialog_number_picker, null)
+            val np = dialogView.findViewById<NumberPicker>(R.id.numberPicker).apply {
+                maxValue = mViewModel.playersNumber
+                minValue = 1
+                value = 1
+                wrapSelectorWheel = true
             }
+
+            AlertDialog.Builder(this)
+                    .setTitle(R.string.most_suitable_card)
+                    .setView(dialogView)
+                    .setCancelable(false)
+                    .setNeutralButton(R.string.OK) { _, _ ->
+                        serverMessage.postValue(Commands.CLIENT_COMMANDS.CLIENT_CHOOSE
+                                + Commands.DELIM
+                                + np.value)
+                        mViewModel.choosing.value = false
+                    }.show()
         })
     }
 

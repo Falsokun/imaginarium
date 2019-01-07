@@ -7,4 +7,8 @@ interface ServerCallback {
     fun sendMessageTo(senderId: String, tag: String, msg: String = "")
 
     fun sendMessageExcept(banId: String, tag: String, msg: String = "")
+
+    fun changeClientName(username: String, newUsername: String)
+
+    fun removeClient(username: String)
 }

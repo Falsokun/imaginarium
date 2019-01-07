@@ -4,8 +4,7 @@ import android.content.Intent
 import android.util.Log
 import com.example.olesya.boardgames.Commands
 import com.example.olesya.boardgames.connection.common.BoundService
-import com.example.olesya.boardgames.entity.GameController
-import com.example.olesya.boardgames.entity.Player
+import com.example.olesya.boardgames.game.controller.GameController
 import com.example.olesya.boardgames.game.controller.ImaginariumController
 import java.net.ServerSocket
 import java.net.SocketException
@@ -40,18 +39,15 @@ class Server : BoundService(), ServerCallback {
      * Подключает всех пользователей и запускает игру
      */
     private fun initController(totalPlayerNum: Int, winPts: Int) {
-        gameController = ImaginariumController(this, mutableListOf(), winPts, this)
+        gameController = ImaginariumController(this, mutableListOf(), totalPlayerNum, winPts, this)
 
         connectionController = Thread(Runnable {
-            val players = mutableListOf<Player>()
             try {
-//                for (i in 0..totalPlayerNum) {
-                    openConnection()?.let { players.add(it) }
-//                }
+                while (clients.size != totalPlayerNum) {
+                    openConnection()
+                }
 
-                gameController.players = players
                 sendMessageToAll("game start")
-                gameController.startGame()
             } catch (ex: SocketException) {
                 Log.d("server", "closed")
             }
@@ -63,16 +59,11 @@ class Server : BoundService(), ServerCallback {
     /**
      * Открывает соединение с клиентом
      */
-    private fun openConnection(): Player? {
-        if (serverSocket.isClosed)
-            return null
-//            serverSocket = ServerSocket(PORT_NUMBER)
-
+    private fun openConnection() {
         val clientSocket = serverSocket.accept()
         val client = CardHandler(clientSocket, gameController)
         clients.add(client)
         Thread(client).start()
-        return client.player
     }
 
     /**
@@ -87,22 +78,31 @@ class Server : BoundService(), ServerCallback {
 
     override fun sendMessageExcept(banId: String, tag: String, msg: String) {
         Log.d("Server", "send except $banId message: $msg")
-        clients.filter { it.player.username != banId }
-                .forEach{it.sendMsg(tag + Commands.DELIM + msg)}
+        clients.filter { it.username != banId }
+                .forEach { it.sendMsg(tag + Commands.DELIM + msg) }
     }
 
     /**
      * Отправляет сообщение пользователю
      */
     override fun sendMessageTo(senderId: String, tag: String, msg: String) {
-        val client = clients.find { x -> x.player.username == senderId }
+        val client = clients.find { x -> x.username == senderId }
         Log.d("Server", "send to $senderId - $msg")
         client?.sendMsg(tag + Commands.DELIM + msg)
+    }
+
+    override fun changeClientName(username: String, newUsername: String) {
+        val client = clients.find { it.username == username }
+        client?.let { client.username = newUsername }
     }
 
     override fun onDestroy() {
         connectionController.interrupt()
         serverSocket.close()
         super.onDestroy()
+    }
+
+    override fun removeClient(username: String) {
+        clients.removeAll { it.username == username }
     }
 }

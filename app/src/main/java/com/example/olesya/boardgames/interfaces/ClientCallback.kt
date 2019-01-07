@@ -7,7 +7,9 @@ interface ClientCallback {
 
     fun userPickingEnabled(enabled: Boolean)
 
-    fun userChoosingEnabled(enabled: Boolean)
+    fun userChoosingEnabled(enabled: Boolean, fromNum: Int)
 
     fun showMessage(message: String)
+
+    fun usernameChanged(username: String)
 }

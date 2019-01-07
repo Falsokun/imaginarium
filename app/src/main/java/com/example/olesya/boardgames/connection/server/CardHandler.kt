@@ -3,18 +3,18 @@ package com.example.olesya.boardgames.connection.server
 import android.util.Log
 import com.example.olesya.boardgames.Commands
 import com.example.olesya.boardgames.Commands.DELIM
-import com.example.olesya.boardgames.entity.GameController
+import com.example.olesya.boardgames.game.controller.GameController
 import com.example.olesya.boardgames.entity.Player
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.io.PrintWriter
 import java.net.Socket
 
-class CardHandler(socket: Socket, var gameController: GameController) : Runnable {
+class CardHandler(socket: Socket, private var gameController: GameController) : Runnable {
 
     private val outMessage = PrintWriter(socket.getOutputStream())
     private val inMessage = BufferedReader(InputStreamReader(socket.getInputStream()))
-    val player = Player()
+    var username: String = ""
 
     override fun run() {
         acceptUserEvent()
@@ -22,7 +22,7 @@ class CardHandler(socket: Socket, var gameController: GameController) : Runnable
         while (clientMessage != null) {
             handleClientMessage(clientMessage)
             if (clientMessage.toUpperCase() == Commands.CLIENT_CONFIG.END_MSG) {
-                break
+                gameController.onRemovePlayer(username)
             }
 
             clientMessage = inMessage.readLine()
@@ -33,8 +33,8 @@ class CardHandler(socket: Socket, var gameController: GameController) : Runnable
      * Accept user and check for username
      */
     private fun acceptUserEvent() {
-        val username = inMessage.readLine()
-        gameController.onAddUserEvent(username, username)
+        username = inMessage.readLine()
+        gameController.onAddUserEvent(username)
     }
 
     private fun handleClientMessage(clientMessage: String) {
@@ -43,9 +43,9 @@ class CardHandler(socket: Socket, var gameController: GameController) : Runnable
         gameController.screenMessage.postValue(action)
         when (action) {
             Commands.CLIENT_COMMANDS.CLIENT_TURN ->
-                gameController.clientPicksCard(player.username, clientMessage.split(DELIM)[1])
+                gameController.clientPicksCard(username, clientMessage.split(DELIM)[1])
             Commands.CLIENT_COMMANDS.CLIENT_CHOOSE ->
-                gameController.clientChoosesCard(player.username, clientMessage.split(DELIM)[1])
+                gameController.clientChoosesCard(username, clientMessage.split(DELIM)[1])
         }
     }
 

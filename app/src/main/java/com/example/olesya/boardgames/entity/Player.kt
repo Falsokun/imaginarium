@@ -1,18 +1,18 @@
 package com.example.olesya.boardgames.entity
 
 import android.arch.lifecycle.MutableLiveData
+import io.reactivex.subjects.BehaviorSubject
 
 /**
  * Инициализация username в конструкторе!
  */
-class Player constructor(var username: String = "player") {
+class Player constructor(var username: String) {
 
-    var score: MutableLiveData<Int> = MutableLiveData()
-
+    val score: BehaviorSubject<Int> = BehaviorSubject.create<Int>()
     var cards: MutableLiveData<MutableList<Card>> = MutableLiveData()
 
     init {
-        score.postValue(0)
+        score.onNext(0)
         cards.postValue(ArrayList())
     }
 
@@ -23,7 +23,7 @@ class Player constructor(var username: String = "player") {
     }
 
     fun changeScore(pts : Int) {
-        score.postValue(score.value?.plus(pts))
+        score.onNext(pts)
     }
 
     fun removeCard(position: Int) {

@@ -14,7 +14,6 @@ import com.example.olesya.boardgames.R
 import com.example.olesya.boardgames.databinding.LayoutCardBinding
 import com.example.olesya.boardgames.entity.Card
 
-
 class CardPagerAdapter : RecyclerView.Adapter<CardPagerAdapter.Holder>() {
 
     var dataset: MutableList<Card> = mutableListOf()
@@ -47,7 +46,6 @@ class CardPagerAdapter : RecyclerView.Adapter<CardPagerAdapter.Holder>() {
     fun <T : Card> setData(cards: MutableList<T>) {
         dataset.clear()
         dataset.addAll(cards)
-        notifyDataSetChanged()
     }
 
     fun add(card: Card) {

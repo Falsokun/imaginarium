@@ -5,18 +5,18 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.design.widget.Snackbar
+import android.support.v7.util.DiffUtil
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import com.example.olesya.boardgames.Commands
 import com.example.olesya.boardgames.R
 import com.example.olesya.boardgames.Utils
+import com.example.olesya.boardgames.adapter.CardDiffUtil
 import com.example.olesya.boardgames.adapter.CardPagerAdapter
 import com.example.olesya.boardgames.adapter.PlayerAdapter
 import com.example.olesya.boardgames.connection.common.ServiceHolderActivity
 import com.example.olesya.boardgames.connection.server.Server
 import com.example.olesya.boardgames.databinding.ActivityScreenImaginariumBinding
-import com.example.olesya.boardgames.entity.ImaginariumCard
+import com.example.olesya.boardgames.entity.Card
 import com.example.olesya.boardgames.ui.viewmodel.ScreenViewModel
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 
@@ -32,6 +32,7 @@ class ScreenActivity : ServiceHolderActivity() {
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_screen_imaginarium)
         viewModel = ViewModelProviders.of(this).get(ScreenViewModel::class.java)
         playerStatusAdapter = PlayerAdapter()
+        initPlayerStatus()
         initCardPager()
         startServerService()
 
@@ -55,12 +56,22 @@ class ScreenActivity : ServiceHolderActivity() {
         viewModel.controller.screenMessage.observe(this, Observer { value ->
                 Utils.showSnackbar(mBinding.buttonSend, value!!)
         })
-        viewModel.controller.screenCards.observe(this,
-                Observer<MutableList<ImaginariumCard>> { cards ->
-                    if (cards != null) {
-                        cardPagerAdapter.setData(cards)
-                    }
-                })
+
+        viewModel.controller.screenCards.observe(this) {
+            val diffResult = DiffUtil.calculateDiff(CardDiffUtil(cardPagerAdapter.dataset,
+                    it.map { it as Card }.toMutableList()))
+            cardPagerAdapter.setData(it)
+            diffResult.dispatchUpdatesTo(cardPagerAdapter)
+            cardPagerAdapter.notifyDataSetChanged()
+        }
+
+        viewModel.controller.players.observe(this) {
+            playerStatusAdapter.players = it
+            playerStatusAdapter.notifyDataSetChanged()
+            if (it.size == viewModel.controller.totalPlayers) {
+                viewModel.controller.startGame()
+            }
+        }
     }
 
     private fun startServerService() {
@@ -81,5 +92,10 @@ class ScreenActivity : ServiceHolderActivity() {
         mBinding.cardRv.itemAnimator = SlideInUpAnimator()
         mBinding.cardRv.itemAnimator.addDuration = 200
         mBinding.cardRv.adapter = cardPagerAdapter
+    }
+
+    private fun initPlayerStatus() {
+        mBinding.playersStatusRv.adapter = playerStatusAdapter
+        mBinding.playersStatusRv.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
     }
 }
