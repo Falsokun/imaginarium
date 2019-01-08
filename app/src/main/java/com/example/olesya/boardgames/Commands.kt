@@ -26,4 +26,9 @@ object Commands {
         const val CLIENT_TURN = "CLIENT_USER_TURN"
         const val CLIENT_CHOOSE = "CLIENT_CHOOSE"
     }
+
+    object SCREEN_COMMANDS {
+        const val SHOW_WINNER = "SHOW_WINNER"
+        const val SHOW_ROUND_RESULTS = "SHOW_ROUND_RESULTS"
+    }
 }

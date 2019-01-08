@@ -3,9 +3,6 @@ package com.example.olesya.boardgames.entity
 import android.arch.lifecycle.MutableLiveData
 import io.reactivex.subjects.BehaviorSubject
 
-/**
- * Инициализация username в конструкторе!
- */
 class Player constructor(var username: String) {
 
     val score: BehaviorSubject<Int> = BehaviorSubject.create<Int>()

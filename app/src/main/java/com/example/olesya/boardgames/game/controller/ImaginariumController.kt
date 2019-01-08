@@ -7,6 +7,7 @@ import com.example.olesya.boardgames.Commands.DELIM
 import com.example.olesya.boardgames.connection.server.ServerCallback
 import com.example.olesya.boardgames.entity.ImaginariumCard
 import com.example.olesya.boardgames.entity.Player
+import com.example.olesya.boardgames.ui.dialog.RoundResultDialog
 import java.util.*
 
 /**
@@ -97,7 +98,7 @@ class ImaginariumController(context: Context,
         if (hasWinner()) {
             showWinner()
         } else {
-            startRound()
+            screenActions.postValue(Commands.SCREEN_COMMANDS.SHOW_ROUND_RESULTS)
             screenMessage.postValue("start new round")
         }
     }
@@ -114,7 +115,7 @@ class ImaginariumController(context: Context,
         when {
             leaderScore == players.value.size - 1 -> {
                 Log.d("LGame", "all players guessed")
-                lScore = Math.min(lScore - GUESSED_CARD_PTS, 0)
+                lScore = Math.max(lScore - GUESSED_CARD_PTS, 0)
             }
             leaderScore > 0 -> {
                 Log.d("LGame", "any player guessed")
@@ -123,7 +124,7 @@ class ImaginariumController(context: Context,
             }
             else -> {
                 Log.d("LGame", "no one guessed")
-                lScore = Math.min( lScore - NONE_GUESSED_PTS, 0)
+                lScore = Math.max(lScore - NONE_GUESSED_PTS, 0)
                 countPtsForUsers(leaderName, votes)
             }
         }

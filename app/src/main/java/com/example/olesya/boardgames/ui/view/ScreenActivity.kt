@@ -72,6 +72,10 @@ class ScreenActivity : ServiceHolderActivity() {
                 viewModel.controller.startGame()
             }
         }
+
+        viewModel.controller.screenActions.observe(this, Observer {
+            viewModel.handleAction(this, it)
+        })
     }
 
     private fun startServerService() {
@@ -96,6 +100,6 @@ class ScreenActivity : ServiceHolderActivity() {
 
     private fun initPlayerStatus() {
         mBinding.playersStatusRv.adapter = playerStatusAdapter
-        mBinding.playersStatusRv.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        mBinding.playersStatusRv.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
     }
 }

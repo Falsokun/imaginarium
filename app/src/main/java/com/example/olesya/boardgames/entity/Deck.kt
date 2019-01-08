@@ -11,6 +11,7 @@ class Deck(context: Context) {
 
     private var current: MutableList<Card> = mutableListOf()
     private var total: MutableList<Card> = mutableListOf()
+    private val random = Random()
 
     init {
         total.addAll(AppDatabase.getInstance(context)
@@ -25,12 +26,11 @@ class Deck(context: Context) {
     }
 
     fun getRandomCard(): Card? {
-        val r = Random()
         if (current.size == 0) {
             return null
         }
 
-        val newCard = current[r.nextInt(current.size)]
+        val newCard = current[random.nextInt(current.size)]
         current.remove(newCard)
         return newCard
     }

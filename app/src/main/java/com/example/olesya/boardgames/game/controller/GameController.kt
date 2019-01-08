@@ -41,6 +41,8 @@ abstract class GameController constructor(context: Context,
      */
     var screenMessage: MutableLiveData<String> = MutableLiveData()
 
+    val screenActions: MutableLiveData<String> = MutableLiveData()
+
     /**
      * Position of user who is able to finish the round
      * Ex.: Imaginarium - who sets the topic
@@ -56,6 +58,7 @@ abstract class GameController constructor(context: Context,
         this.players.value = players
     }
 
+    //region abstracts
     /**
      * Client picked card and put to desk
      */
@@ -76,15 +79,14 @@ abstract class GameController constructor(context: Context,
      */
     abstract fun initPlayerHands()
 
+    abstract fun choosePlayerOrder()
+    //endregion
+
     fun addCard(card: ImaginariumCard) {
         val cur = screenCards.value
         //won't be null if null arraylist won't be explicitly set to screencards
         cur.add(0, card)
         screenCards.postValue(cur)
-    }
-
-    fun shuffleCards() {
-        //TODO:
     }
 
     fun onAddUserEvent(username: String) {
@@ -137,8 +139,6 @@ abstract class GameController constructor(context: Context,
         screenCards.postValue(mutableListOf())
     }
 
-    abstract fun choosePlayerOrder()
-
     /**
      * Chooses next leader
      */
@@ -150,7 +150,7 @@ abstract class GameController constructor(context: Context,
         return players.value[leaderPosition]
     }
 
-    fun addPlayer(username: Player) {
+    private fun addPlayer(username: Player) {
         val temp = players.value
         temp.add(username)
         players.postValue(temp)
@@ -164,6 +164,6 @@ abstract class GameController constructor(context: Context,
     }
 
     fun showWinner() {
-        //TODO: not implemented
+        screenActions.postValue(Commands.SCREEN_COMMANDS.SHOW_WINNER)
     }
 }
