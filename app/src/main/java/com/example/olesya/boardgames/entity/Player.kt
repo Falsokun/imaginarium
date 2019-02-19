@@ -1,6 +1,6 @@
 package com.example.olesya.boardgames.entity
 
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.MutableLiveData
 import io.reactivex.subjects.BehaviorSubject
 
 class Player constructor(var username: String) {

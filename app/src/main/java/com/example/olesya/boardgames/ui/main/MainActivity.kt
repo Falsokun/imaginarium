@@ -1,9 +1,9 @@
 package com.example.olesya.boardgames.ui.main
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v7.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.appcompat.app.AppCompatActivity
 import android.view.MenuItem
 import android.view.View
 import android.widget.FrameLayout
@@ -49,6 +49,9 @@ class MainActivity: AppCompatActivity() {
     private fun removeTopFragment(manager: FragmentManager) {
         val topFragment = manager.findFragmentByTag(MenuFragment::class.java.name)
         val trans = manager.beginTransaction()
+        if (topFragment == null)
+            return
+
         trans.remove(topFragment)
         trans.commit()
         manager.popBackStack()

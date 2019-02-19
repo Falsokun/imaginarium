@@ -1,74 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/gradient">
 
-        <RelativeLayout
-            android:id="@+id/container_players"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/std_mrgn"
-            android:background="#30f29492">
-
-            <TextView
-                android:id="@+id/stats_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/std_mrgn"
-                android:layout_marginTop="@dimen/std_mrgn"
-                android:paddingRight="@dimen/std_mrgn"
-                android:text="@string/player_status" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/players_status_rv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/stats_title" />
-        </RelativeLayout>
+        <com.sofakingforever.stars.AnimatedStarsView
+            android:id="@+id/stars"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alpha="0.5"
+            app:starsView_bigStarThreshold="10dp"
+            app:starsView_maxStarSize="3dp"
+            app:starsView_meteoritesColors="@array/meteorites_colors"
+            app:starsView_meteoritesEnabled="true"
+            app:starsView_meteoritesInterval="2000"
+            app:starsView_minStarSize="1dp"
+            app:starsView_starColors="@array/star_colors_small"
+            app:starsView_starCount="250" />
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="100dp"
-            android:layout_marginTop="100dp"
-            android:layout_centerInParent="true">
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="50dp"
+            android:layout_marginTop="50dp">
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/card_rv"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="@dimen/card_height_screen" />
 
-            <android.support.v7.widget.RecyclerView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/chip_rv"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:visibility="gone" />
         </FrameLayout>
 
-
-        <RelativeLayout
+        <include
+            android:id="@+id/status_menu"
+            layout="@layout/player_status_layout"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true">
+            android:layout_height="match_parent" />
 
-            <EditText
-                android:id="@+id/test_msg"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="enter smth"
-                android:minWidth="100dp" />
-
-            <Button
-                android:id="@+id/button_send"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/test_msg"
-                android:layout_centerInParent="true"
-                android:background="@drawable/opacity_button"
-                android:text="send" />
-        </RelativeLayout>
-    </RelativeLayout>
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/more"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginTop="@dimen/std_mrgn"
+            app:layout_constraintLeft_toLeftOf="@id/status_menu"
+            app:layout_constraintRight_toRightOf="@id/status_menu"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="false"
+            app:lottie_loop="false"
+            app:lottie_rawRes="@raw/hama"
+            app:lottie_repeatMode="reverse"
+            app:lottie_scale="8"
+            tools:src="@drawable/opacity_button" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

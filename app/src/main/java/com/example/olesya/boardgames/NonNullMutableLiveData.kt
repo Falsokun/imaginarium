@@ -1,8 +1,8 @@
 package com.example.olesya.boardgames
 
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 
 class NonNullMutableLiveData<T>(private val defaultValue: T) : MutableLiveData<T>() {
     override fun getValue(): T = super.getValue() ?: defaultValue

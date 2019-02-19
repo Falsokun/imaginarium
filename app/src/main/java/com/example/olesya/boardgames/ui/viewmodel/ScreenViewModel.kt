@@ -1,10 +1,11 @@
 package com.example.olesya.boardgames.ui.viewmodel
 
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import android.content.Context
 import android.view.View
 import com.example.olesya.boardgames.Commands
+import com.example.olesya.boardgames.NonNullMutableLiveData
 import com.example.olesya.boardgames.game.controller.GameController
 import com.example.olesya.boardgames.ui.dialog.RoundResultDialog
 
@@ -13,6 +14,8 @@ class ScreenViewModel : ViewModel() {
     lateinit var controller: GameController
 
     var message: MutableLiveData<String> = MutableLiveData()
+
+    var isVisibleStatuses: NonNullMutableLiveData<Boolean> = NonNullMutableLiveData(false)
 
     fun handleAction(context: Context, action: String?) {
         action ?: return

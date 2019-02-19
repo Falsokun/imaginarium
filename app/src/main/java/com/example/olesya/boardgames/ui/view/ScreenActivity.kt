@@ -1,12 +1,15 @@
 package com.example.olesya.boardgames.ui.view
 
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
-import android.databinding.DataBindingUtil
+import androidx.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.LinearLayoutManager
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
+import android.view.View
+import android.view.animation.Animation
+import androidx.recyclerview.widget.RecyclerView
 import com.example.olesya.boardgames.Commands
 import com.example.olesya.boardgames.R
 import com.example.olesya.boardgames.Utils
@@ -31,18 +34,32 @@ class ScreenActivity : ServiceHolderActivity() {
         super.onCreate(savedInstanceState)
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_screen_imaginarium)
         viewModel = ViewModelProviders.of(this).get(ScreenViewModel::class.java)
-        playerStatusAdapter = PlayerAdapter()
         initPlayerStatus()
         initCardPager()
-        startServerService()
 
+        startServerService()
+        initObservers()
+
+    }
+
+    private fun initObservers() {
+        mBinding.stars.onStart()
         viewModel.message.observe(this, Observer {
             if (it != null) {
                 Utils.showAlert(this, it)
             }
         })
 
-        mBinding.buttonSend.setOnClickListener { serverMessage.postValue("anything") }
+        viewModel.isVisibleStatuses.observe(this, Observer { visible ->
+            if (visible != null) {
+                mBinding.more.progress = if (visible) 0f else 0.5f
+                mBinding.more.setMinProgress(if (visible) 0f else 0.5f)
+                mBinding.more.setMaxProgress(if (visible) 0.5f else 1f)
+                mBinding.more.playAnimation()
+//                mBinding.statusMenu.more.addAnimatorListener(Animation.AnimationListener{ })
+            }
+
+        })
     }
 
     override fun onDestroy() {
@@ -52,9 +69,10 @@ class ScreenActivity : ServiceHolderActivity() {
 
     override fun setCallbacks() {
         viewModel.controller = (mService as Server).gameController
+        viewModel.controller.test()
         viewModel.controller.lcOwner = this
         viewModel.controller.screenMessage.observe(this, Observer { value ->
-                Utils.showSnackbar(mBinding.buttonSend, value!!)
+            Utils.showSnackbar(mBinding.root, value!!)
         })
 
         viewModel.controller.screenCards.observe(this) {
@@ -94,12 +112,15 @@ class ScreenActivity : ServiceHolderActivity() {
         mBinding.cardRv.setHasFixedSize(true)
         mBinding.cardRv.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         mBinding.cardRv.itemAnimator = SlideInUpAnimator()
-        mBinding.cardRv.itemAnimator.addDuration = 200
+        (mBinding.cardRv.itemAnimator as SlideInUpAnimator).addDuration = 200
         mBinding.cardRv.adapter = cardPagerAdapter
     }
 
     private fun initPlayerStatus() {
-        mBinding.playersStatusRv.adapter = playerStatusAdapter
-        mBinding.playersStatusRv.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        playerStatusAdapter = PlayerAdapter()
+        mBinding.statusMenu.playersStatusRv.adapter = playerStatusAdapter
+        mBinding.more.setOnClickListener({ viewModel.isVisibleStatuses.postValue(!viewModel.isVisibleStatuses.value) })
+        mBinding.statusMenu.playersStatusRv.layoutManager =
+                LinearLayoutManager(this, RecyclerView.VERTICAL, false)
     }
 }

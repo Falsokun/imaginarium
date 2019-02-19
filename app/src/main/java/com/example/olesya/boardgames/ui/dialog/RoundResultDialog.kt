@@ -2,7 +2,7 @@ package com.example.olesya.boardgames.ui.dialog
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v7.app.AlertDialog
+import androidx.appcompat.app.AlertDialog
 import com.example.olesya.boardgames.R
 import com.example.olesya.boardgames.entity.Player
 import kotlinx.android.synthetic.main.dialog_result.*

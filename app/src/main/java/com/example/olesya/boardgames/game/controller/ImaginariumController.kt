@@ -7,7 +7,6 @@ import com.example.olesya.boardgames.Commands.DELIM
 import com.example.olesya.boardgames.connection.server.ServerCallback
 import com.example.olesya.boardgames.entity.ImaginariumCard
 import com.example.olesya.boardgames.entity.Player
-import com.example.olesya.boardgames.ui.dialog.RoundResultDialog
 import java.util.*
 
 /**

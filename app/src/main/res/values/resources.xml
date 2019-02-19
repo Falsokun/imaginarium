@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CardView">
+        <attr name="faceDown" format="string" />
+        <attr name="faceUp" format="string" />
+    </declare-styleable>
+</resources>

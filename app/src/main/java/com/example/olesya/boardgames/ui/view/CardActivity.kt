@@ -1,14 +1,14 @@
 package com.example.olesya.boardgames.ui.view
 
 import android.app.AlertDialog
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import android.content.Intent
-import android.databinding.DataBindingUtil
+import androidx.databinding.DataBindingUtil
 import android.os.Bundle
-import android.support.v7.util.DiffUtil
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.helper.ItemTouchHelper
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
 import android.widget.NumberPicker
 import com.example.olesya.boardgames.Commands
 import com.example.olesya.boardgames.Commands.DELIM
@@ -45,7 +45,7 @@ class CardActivity : ServiceHolderActivity() {
         mBinding.cardRv.setHasFixedSize(true)
         mBinding.cardRv.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         mBinding.cardRv.itemAnimator = FadeInDownAnimator()
-        mBinding.cardRv.itemAnimator.addDuration = 100
+        (mBinding.cardRv.itemAnimator as FadeInDownAnimator).addDuration = 100
 //        mAdapter.setClientCallback(this);
         mBinding.cardRv.adapter = mAdapter
         val touchHelper = ItemTouchHelper(itemTouchCallback)

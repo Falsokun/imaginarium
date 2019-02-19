@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer-array name="star_colors_small">
+        <!-- This is how you can configure the ratio of star colors-->
+        <item>@color/star_color_1</item>
+        <item>@color/star_color_1</item>
+        <item>@color/star_color_1</item>
+        <item>@color/star_color_1</item>
+        <item>@color/star_color_2</item>
+        <item>@color/star_color_3</item>
+    </integer-array>
+
+    <integer-array name="meteorites_colors">
+        <item>@color/star_color_2</item>
+        <item>@color/star_color_4</item>
+        <item>@color/star_color_3</item>
+    </integer-array>
+
+    <color name="star_color_1">#b5faf4b4</color>
+    <color name="star_color_2">#84ffd000</color>
+    <color name="star_color_3">#c387d1d1</color>
+    <color name="star_color_4">#c4b3b3d6</color>
+</resources>

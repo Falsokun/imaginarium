@@ -1,8 +1,8 @@
 package com.example.olesya.boardgames.game.controller
 
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Observer
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import android.content.Context
 import com.example.olesya.boardgames.Commands
 import com.example.olesya.boardgames.NonNullMutableLiveData
@@ -165,5 +165,16 @@ abstract class GameController constructor(context: Context,
 
     fun showWinner() {
         screenActions.postValue(Commands.SCREEN_COMMANDS.SHOW_WINNER)
+    }
+
+    fun test() {
+        deck.reInitDeck()
+        val list: MutableList<ImaginariumCard> = mutableListOf()
+        for (i in 1..5) {
+            val card: Card = deck.getRandomCard() ?: return
+                list.add(ImaginariumCard(card))
+        }
+
+        screenCards.postValue(list)
     }
 }

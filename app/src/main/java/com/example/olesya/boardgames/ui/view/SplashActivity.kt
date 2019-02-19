@@ -2,7 +2,7 @@ package com.example.olesya.boardgames.ui.view
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.widget.Toast
 import com.example.olesya.boardgames.database.AppDatabase
 import com.example.olesya.boardgames.database.ImageHolderDao

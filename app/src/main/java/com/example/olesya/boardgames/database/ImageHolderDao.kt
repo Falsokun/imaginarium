@@ -1,6 +1,6 @@
 package com.example.olesya.boardgames.database
 
-import android.arch.persistence.room.*
+import androidx.room.*
 import com.example.olesya.boardgames.entity.ImageHolder
 
 @Dao

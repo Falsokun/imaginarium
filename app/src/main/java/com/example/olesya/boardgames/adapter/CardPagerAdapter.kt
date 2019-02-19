@@ -1,16 +1,9 @@
 package com.example.olesya.boardgames.adapter
 
-import android.animation.AnimatorInflater
-import android.animation.AnimatorSet
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.bumptech.glide.request.RequestOptions
-import com.example.olesya.boardgames.R
 import com.example.olesya.boardgames.databinding.LayoutCardBinding
 import com.example.olesya.boardgames.entity.Card
 
@@ -27,20 +20,10 @@ class CardPagerAdapter : RecyclerView.Adapter<CardPagerAdapter.Holder>() {
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        val requestOptions = RequestOptions()
-                .placeholder(R.drawable.ic_image_black_24dp)
-                .centerCrop()
-                .transform(RoundedCorners(10))
-
-        Glide.with(holder.mBinding.root.context)
-                .load(dataset[position].img)
-                .apply(requestOptions)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(holder.mBinding.imgSource)
-
         //TODO: ??
-        holder.mBinding.votesContainer.removeAllViews()
-        dataset[position].isVisible.subscribe { visibility -> holder.uncoverItem(visibility) }
+        holder.mBinding.card.setFaceUp(dataset[position].img)
+//        holder.mBinding.votesContainer.removeAllViews()
+//        dataset[position].isVisible.subscribe { visibility -> holder.mBinding.card.animateFaceUpChange(visibility) }
     }
 
     fun <T : Card> setData(cards: MutableList<T>) {
@@ -62,37 +45,12 @@ class CardPagerAdapter : RecyclerView.Adapter<CardPagerAdapter.Holder>() {
             View.OnLongClickListener {
 
         init {
-            mBinding.root.setOnLongClickListener(this)
+//            mBinding.root.setOnLongClickListener(this)
         }
 
         override fun onLongClick(v: View?): Boolean {
-            //TODO: !какой-то монстр с восклицательными знаками с обеих сторон!!
-            dataset[adapterPosition].isVisible.onNext(!dataset[adapterPosition].isVisible.value!!)
+//            dataset[adapterPosition].isVisible.onNext(!dataset[adapterPosition].isVisible.value!!)
             return false
-        }
-
-        fun uncoverItem(isVisible: Boolean) {
-            if (isVisible) {
-                startAnimation(mBinding.cardFace, mBinding.imgSource)
-            } else {
-                startAnimation(mBinding.imgSource, mBinding.cardFace)
-            }
-        }
-
-        private fun startAnimation(hide: View, show: View) {
-            val animationHide = AnimatorInflater.loadAnimator(mBinding.root.context,
-                    R.animator.animation_rotate_hide) as AnimatorSet
-            animationHide.setTarget(hide)
-//            animationHide.addListener(this)
-            val animationShow = AnimatorInflater.loadAnimator(mBinding.root.context,
-                    R.animator.animation_rotate_reveal) as AnimatorSet
-            animationShow.setTarget(show)
-            animationHide.start()
-            animationShow.start()
-            val scale = hide.context.resources.displayMetrics.density
-            val distance = 8000
-            hide.cameraDistance = distance * scale
-            show.cameraDistance = distance * scale
         }
     }
 

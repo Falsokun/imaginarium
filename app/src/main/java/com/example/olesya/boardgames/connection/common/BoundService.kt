@@ -1,7 +1,7 @@
 package com.example.olesya.boardgames.connection.common
 
 import android.app.Service
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.MutableLiveData
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder

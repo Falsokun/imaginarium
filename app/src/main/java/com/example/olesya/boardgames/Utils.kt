@@ -2,14 +2,16 @@ package com.example.olesya.boardgames
 
 import android.content.Context
 import android.net.wifi.WifiManager
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AlertDialog
+import com.google.android.material.snackbar.Snackbar
+import androidx.appcompat.app.AlertDialog
 import android.view.View
 
 
 class Utils {
 
     companion object {
+        const val DEFAULT_FACE_UP = "https://payload.cargocollective.com/1/13/434102/10443971/2_2_800.jpg"
+
         fun isWifiEnabled(context: Context): Boolean {
             val wifi = context
                     .applicationContext
